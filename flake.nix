@@ -5,15 +5,18 @@
   inputs.deploy-rs.url = "github:serokell/deploy-rs";
 
   outputs = { self, nixpkgs, deploy-rs }: {
-    nixosConfigurations.some-random-system = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.nah0 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      modules = [ ./some-random-system/configuration.nix ];
+      modules = [ ./nah0/configuration.nix ];
     };
 
-    deploy.nodes.some-random-system.profiles.system = {
-        user = "root";
-        path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.some-random-system;
-    };
+    deploy.nodes.nah0 = {
+        hostname = "nah0.lotust.xyz"
+        profiles.system = {
+            user = "root";
+            path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.nah0;
+        };
+    }
 
     # This is highly advised, and will prevent many possible mistakes
     checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
