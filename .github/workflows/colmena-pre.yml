@@ -21,11 +21,12 @@ jobs:
       #     extra-platforms = aarch64-linux
       #     trusted-public-keys = hydra.nichi.co-0:P3nkYHhmcLR3eNJgOAnHDjmQLkfqheGyhZ6GLrUVHwk= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
       #     substituters = https://cache.nichi.co https://cache.nixos.org/
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
     - name: Print nixpkgs version
       run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
     - name: Check format
       run: nix-shell -p nixpkgs-fmt --run "nixpkgs-fmt --check ./"
     - name: "Test build"
       run: nix-shell -p colmena --run "colmena build"
+    
+# Ref: 
+#      https://github.com/NickCao/flakes/blob/ca818e5c92b2ab7dca7113b2a2cc598aac3f0baf/.github/workflows/nix.yml

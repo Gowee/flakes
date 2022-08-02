@@ -1,0 +1,25 @@
+name: Colmena
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: '${{ inputs.ref }}'
+    - uses: cachix/install-nix-action@v17
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
+    - name: Print nixpkgs version
+      run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
+    # - name: Check format
+    #   run: nix-shell -p nixpkgs-fmt --run "nixpkgs-fmt --check ./"
+    # - name: "Test build"
+    #   run: nix-shell -p colmena --run "colmena build"
+    - name: "Do deploy"
+      run: nix-shell -p colmena --run "colmena apply"
