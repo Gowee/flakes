@@ -21,5 +21,9 @@ jobs:
     #   run: nix-shell -p nixpkgs-fmt --run "nixpkgs-fmt --check ./"
     # - name: "Test build"
     #   run: nix-shell -p colmena --run "colmena build"
+    - uses: shimataro/ssh-key-action@v2
+      with:
+        key: '${{ secrets.SSH_PRIV_KEY }}'
+        known_hosts: ${{ secrets.KNOWN_HOSTS }} # Not secret at all, just make it easier to change
     - name: "Do deploy"
       run: nix-shell -p colmena --run "colmena apply"
