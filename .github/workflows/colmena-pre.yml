@@ -2,7 +2,7 @@ name: Colmena Pre
 on:
   push:
     branches:
-      primary
+      - primary
   workflow_dispatch:
 
 jobs:

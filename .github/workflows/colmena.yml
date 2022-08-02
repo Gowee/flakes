@@ -4,6 +4,7 @@ on:
     inputs:
       ref:
         description: 'Git Ref to Deploy'
+        required: false
 
 jobs:
   deploy:
