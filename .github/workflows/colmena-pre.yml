@@ -1,0 +1,27 @@
+name: Colmena Pre
+on:
+  push:
+    branches:
+      dev
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: '${{ inputs.ref }}'
+    # - uses: docker/setup-qemu-action@v1
+    - uses: cachix/install-nix-action@v17
+      # with:
+      #   extra_nix_config: |
+      #     extra-platforms = aarch64-linux
+      #     trusted-public-keys = hydra.nichi.co-0:P3nkYHhmcLR3eNJgOAnHDjmQLkfqheGyhZ6GLrUVHwk= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+      #     substituters = https://cache.nichi.co https://cache.nixos.org/
+    - name: Print nixpkgs version
+      run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
+    - name: Check format
+      run: nix-shell -p nixpkgs-fmt --run "nixpkgs-fmt --check ./"
+    - name: "Test build"
+      run: nix-shell -p colmena --run "colmena build"
