@@ -3,10 +3,13 @@ on:
   workflow_dispatch:
     inputs:
       ref:
+        description: 'Git Ref to Deploy'
         required: true
+        default: 'refs/heads/primary'
 
 jobs:
   deploy:
+    environment: deploy
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
