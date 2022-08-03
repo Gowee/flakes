@@ -20,6 +20,13 @@
         # boot.isContainer = true;
         # time.timeZone = "America/Los_Angeles";
       };
+
+      air0 = {
+        deployment = {
+          targetHost = "air0.lotust.xyz";
+        };
+        imports = [ ./hosts/air0 ];
+      };
     };
   };
 }
