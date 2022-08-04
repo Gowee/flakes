@@ -13,8 +13,8 @@
       deployment =
         {
           targetHost = "${name}.lotust.xyz";
-        }
           imports = [ ./hosts/${name} ];
-    });
-  };
-}
+        }
+        });
+    };
+      }
