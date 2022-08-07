@@ -2,6 +2,7 @@
 {
   imports = [
     ./configuration.nix
+    # ./influxdb2.nix
     # self.nixosModules.vultr
     # self.nixosModules.v2ray
     # self.nixosModules.cloud.common
