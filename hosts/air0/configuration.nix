@@ -102,6 +102,7 @@
   services.openssh.enable = true;
 
   services.web.enable = true;
+  services.grafana.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

@@ -64,12 +64,24 @@ with lib;{
               entrypoints = [ "https" ];
               service = "influxdb";
             };
+            grafana = {
+              rule = "Host(`grafana.${config.networking.domain}`)";
+              entrypoints = [ "https" ];
+              service = "grafana";
+            };
           };
           services = {
             influxdb = {
               loadBalancer = {
                 servers = [
                   { url = "http://localhost:8086"; }
+                ];
+              };
+            };
+            grafana = {
+              loadBalancer = {
+                servers = [
+                  { url = "http://localhost:3000"; }
                 ];
               };
             };
