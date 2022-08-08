@@ -29,6 +29,9 @@ jobs:
         known_hosts: ${{ secrets.KNOWN_HOSTS }} # Not secret at all, just make it easier to change
     - name: Write SOPS key
       run: |
-        echo "${{ secrets.SOPS_KEY }}" > ./sops.key
+        KEY_PATH=/tmp/sops.key
+        touch $KEY_PATH
+        chmod 0600
+        echo "${{ secrets.SOPS_KEY }}" > $KEY_PATH
     - name: "Do deploy"
       run: nix-shell -p colmena --run "colmena apply"

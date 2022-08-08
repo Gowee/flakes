@@ -21,7 +21,7 @@
         {
           targetHost = "${name}.lotust.xyz";
           keys."sops.key" = {
-            keyFile = ./sops.key;
+            keyCommand = [ "sh" "-c" "cat $HOME/.config/sops/age/keys.txt || cat /tmp/sops.key" ];
             destDir = "/run/keys";
             uploadAt = "pre-activation";
           };
