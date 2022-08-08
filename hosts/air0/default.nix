@@ -1,9 +1,11 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, specialArgs, ... }:
 {
-  imports = [
+  imports = with specialArgs;[
     ./configuration.nix
     ./web.nix
     ./influxdb2.nix
+    ./telegraf.nix
+    inputs.sops-nix.nixosModules.sops
     # self.nixosModules.vultr
     # self.nixosModules.v2ray
     # self.nixosModules.cloud.common
