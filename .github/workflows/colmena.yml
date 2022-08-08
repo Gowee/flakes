@@ -31,7 +31,7 @@ jobs:
       run: |
         KEY_PATH=/tmp/sops.key
         touch $KEY_PATH
-        chmod 0600
+        chmod 0600 $KEY_PATH
         echo "${{ secrets.SOPS_KEY }}" > $KEY_PATH
     - name: "Do deploy"
       run: nix-shell -p colmena --run "colmena apply"
