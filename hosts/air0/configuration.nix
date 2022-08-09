@@ -100,6 +100,7 @@
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+  services.openssh.passwordAuthentication = false;
 
   services.web.enable = true;
   services.grafana.enable = true;
