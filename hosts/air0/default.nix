@@ -5,7 +5,6 @@
     ./web.nix
     ./influxdb2.nix
     self.nixosModules.telegraf
-    inputs.sops-nix.nixosModules.sops
     # self.nixosModules.vultr
     # self.nixosModules.v2ray
     # self.nixosModules.cloud.common
@@ -18,7 +17,7 @@
     #     })
     #   ];
     # }
-    # inputs.sops-nix.nixosModules.sops
+    inputs.sops-nix.nixosModules.sops
     # inputs.impermanence.nixosModules.impermanence
   ];
 }

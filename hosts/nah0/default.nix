@@ -1,7 +1,8 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, specialArgs, ... }:
 {
-  imports = [
+  imports = with specialArgs; [
     ./configuration.nix
+    self.nixosModules.telegraf
     # ./influxdb2.nix
     # self.nixosModules.vultr
     # self.nixosModules.v2ray
@@ -15,7 +16,7 @@
     #     })
     #   ];
     # }
-    # inputs.sops-nix.nixosModules.sops
+    inputs.sops-nix.nixosModules.sops
     # inputs.impermanence.nixosModules.impermanence
   ];
 }
