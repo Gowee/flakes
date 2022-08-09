@@ -5,6 +5,7 @@
     ./web.nix
     ./influxdb2.nix
     ./telegraf.nix
+    self.nixosModules.telegraf
     inputs.sops-nix.nixosModules.sops
     # self.nixosModules.vultr
     # self.nixosModules.v2ray

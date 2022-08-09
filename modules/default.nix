@@ -1,0 +1,3 @@
+{
+  telegraf = import ./telegraf;
+}

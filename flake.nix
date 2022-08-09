@@ -6,11 +6,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-  outputs = inputs@{ nixpkgs, ... }: {
+
+  outputs = inputs@{ self, nixpkgs, ... }: {
+    nixosModules = import ./modules;
     colmena = {
       meta = {
         specialArgs = {
           inherit inputs;
+          inherit self;
         };
         nixpkgs = import nixpkgs {
           system = "x86_64-linux";
