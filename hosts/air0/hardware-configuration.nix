@@ -11,8 +11,13 @@
 
   boot.initrd.availableKernelModules = [ "ahci" "xhci_pci" "virtio_pci" "sr_mod" "virtio_blk" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ ];
+  boot.kernelModules = [ "tcp_bbr" ];
   boot.extraModulePackages = [ ];
+  boot.kernel.sysctl = {
+    "net.ipv4.tcp_fastopen" = 3;
+    "net.ipv4.tcp_congestion_control" = "bbr";
+    "net.core.default_qdisc" = "cake";
+  };
 
   fileSystems."/" =
     {
