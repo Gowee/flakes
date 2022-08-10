@@ -1,9 +1,9 @@
 { pkgs, lib, config, ... }:
-let cfg = config.services.web; in
+let cfg = config.services.gateway; in
 with lib;
 {
   options = {
-    services.web = {
+    services.gateway = {
       enable = mkEnableOption "traefik api gateway";
     };
   };

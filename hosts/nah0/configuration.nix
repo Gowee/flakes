@@ -93,6 +93,8 @@
   services.openssh.enable = true;
   services.openssh.passwordAuthentication = false;
 
+  services.gateway.enable = true;
+
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
