@@ -3,7 +3,7 @@
   imports = with specialArgs; [
     ./configuration.nix
     ./gateway.nix
-    ./mongodb.nix
+    ./mongodb
     self.nixosModules.telegraf
     self.nixosModules.shadowsocks
     # ./influxdb2.nix
