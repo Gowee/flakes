@@ -58,7 +58,7 @@ with lib;
             tcp = {
               routers = {
                 mongo = {
-                  rule = "HostSNI(`air0.${config.network.domain}`)";
+                  rule = "HostSNI(`air0.${config.networking.domain}`)";
                   entrypoints = "mongo";
                   tls = true;
                 };
