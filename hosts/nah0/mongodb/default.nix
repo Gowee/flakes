@@ -10,5 +10,6 @@
     enableAuth = true;
     initialRootPassword = "root";
     initialScript = config.sops.secrets.mongo-init-script.path;
+    extraConfig = "net.port: 27018";
   };
 }
