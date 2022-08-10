@@ -55,22 +55,22 @@ with lib;
           http = {
             routers = { };
             services = { };
-            tcp = {
-              routers = {
-                mongo = {
-                  rule = "HostSNI(`nah0.${config.networking.domain}`)";
-                  entrypoints = [ "mongo" ];
-                  service = "mongo";
-                  tls.certResolver = "le";
-                };
+          };
+          tcp = {
+            routers = {
+              mongo = {
+                rule = "HostSNI(`nah0.${config.networking.domain}`)";
+                entrypoints = [ "mongo" ];
+                service = "mongo";
+                tls.certResolver = "le";
               };
-              services = {
-                mongo = {
-                  loadbalancer = {
-                    servers = [
-                      { port = "27018"; }
-                    ];
-                  };
+            };
+            services = {
+              mongo = {
+                loadbalancer = {
+                  servers = [
+                    { port = "27018"; }
+                  ];
                 };
               };
             };
