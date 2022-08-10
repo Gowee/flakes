@@ -2,7 +2,7 @@
 {
   imports = with specialArgs;[
     ./configuration.nix
-    ./web.nix
+    ./gateway.nix
     ./influxdb2.nix
     self.nixosModules.telegraf
     self.nixosModules.shadowsocks

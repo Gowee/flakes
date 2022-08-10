@@ -102,7 +102,7 @@
   services.openssh.enable = true;
   services.openssh.passwordAuthentication = false;
 
-  services.web.enable = true;
+  services.gateway.enable = true;
   services.grafana.enable = true;
 
   # Open ports in the firewall.
