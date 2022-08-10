@@ -14,19 +14,19 @@ with lib;
         staticConfigOptions = {
           experimental.http3 = true;
           entryPoints = {
-            # http = {
-            #   address = ":80";
-            #   http.redirections.entryPoint = {
-            #     to = "https";
-            #     scheme = "https";
-            #     permanent = false;
-            #   };
-            # };
-            # https = {
-            #   address = ":443";
-            #   http.tls.certResolver = "le";
-            #   http3 = { };
-            # };
+            http = {
+              address = ":80";
+              http.redirections.entryPoint = {
+                to = "https";
+                scheme = "https";
+                permanent = false;
+              };
+            };
+            https = {
+              address = ":443";
+              http.tls.certResolver = "le";
+              http3 = { };
+            };
             mongo = {
               address = ":27017";
             };
