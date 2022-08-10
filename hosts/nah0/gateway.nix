@@ -28,7 +28,7 @@ with lib;
             #   http3 = { };
             # };
             mongo = {
-              address = ":27018";
+              address = ":27017";
             };
           };
           certificatesResolvers.le.acme = {
@@ -67,7 +67,7 @@ with lib;
                 mongo = {
                   loadbalancer = {
                     servers = [
-                      { port = "27017"; }
+                      { port = "27018"; }
                     ];
                   };
                 };
