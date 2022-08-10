@@ -5,6 +5,7 @@
     ./web.nix
     ./influxdb2.nix
     self.nixosModules.telegraf
+    self.nixosModules.shadowsocks
     # self.nixosModules.vultr
     # self.nixosModules.v2ray
     # self.nixosModules.cloud.common

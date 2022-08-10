@@ -2,8 +2,8 @@
 {
   imports = with specialArgs; [
     ./configuration.nix
-    ./shadowsocks
     self.nixosModules.telegraf
+    self.nixosModules.shadowsocks
     # ./influxdb2.nix
     # self.nixosModules.vultr
     # self.nixosModules.v2ray
