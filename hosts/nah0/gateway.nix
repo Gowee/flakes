@@ -52,10 +52,10 @@ with lib;
             minVersion = "VersionTLS13";
             sniStrict = true;
           };
-          http = {
-            routers = { };
-            services = { };
-          };
+          # http = {
+          #   routers = { };
+          #   services = { };
+          # };
           tcp = {
             routers = {
               mongo = {
