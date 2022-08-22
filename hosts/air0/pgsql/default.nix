@@ -10,12 +10,6 @@
           "DATABASE lamp" = "ALL PRIVILEGES";
         };
       }
-      {
-        name = "superuser";
-        ensurePermissions = {
-          "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
-        };
-      }
     ];
     services.postgresql.ensureDatabases = [
       "lamp"
