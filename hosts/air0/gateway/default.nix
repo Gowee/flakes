@@ -10,6 +10,9 @@ with lib;{
     services.traefik = {
       enable = true;
       staticConfigOptions = {
+        api = {
+          dashboard = true;
+        };
         experimental.http3 = true;
         entryPoints = {
           http = {
@@ -24,6 +27,9 @@ with lib;{
             address = ":443";
             http.tls.certResolver = "le";
             http3 = { };
+          };
+          pgsql = {
+            address = ":5432";
           };
         };
         certificatesResolvers.le.acme = {
@@ -48,7 +54,27 @@ with lib;{
           sniStrict = true;
         };
         http = {
+          middlewares = {
+            pgadminHeader = {
+              headers = {
+                customrequestheaders = {
+                  X-Script-Name = "/pgadmin";
+                };
+              };
+            };
+            dashboardAuth = {
+              basicauth = {
+                usersfile = config.sops.secrets.traefik-credentials.path;
+              };
+            };
+          };
           routers = {
+            ception = {
+              rule = "Host(`${config.networking.fqdn}`)";
+              entryPoints = [ "https" ];
+              service = "api@internal";
+              middlewares = [ "dashboardAuth" ];
+            };
             # ping = {
             #   rule = "Host(`${config.networking.fqdn}`) && Path(`/`)";
             #   entryPoints = [ "https" ];
@@ -59,6 +85,12 @@ with lib;{
             #   entryPoints = [ "https" ];
             #   service = "prometheus@internal";
             # };
+            pgadmin = {
+              rule = "Host(`${config.networking.fqdn}`) && PathPrefix(`/pgadmin`)";
+              entryPoints = [ "https" ];
+              service = "pgadmin";
+              middlewares = [ "pgadminHeader" ];
+            };
             influxdb = {
               rule = "Host(`influxdb.${config.networking.domain}`)";
               entrypoints = [ "https" ];
@@ -85,9 +117,40 @@ with lib;{
                 ];
               };
             };
+            pgadmin = {
+              loadBalancer = {
+                servers = [{ url = "http://localhost:5050"; }];
+              };
+            };
+          };
+        };
+        tcp = {
+          routers = {
+            pgsql = {
+              rule = "HostSNI(`${config.networking.fqdn}`)";
+              entrypoints = [ "pgsql" ];
+              service = "pgsql";
+              tls.certResolver = "le";
+            };
+          };
+          services = {
+            pgsql = {
+              loadBalancer = {
+                servers = [
+                  { address = "localhost:15432"; }
+                ];
+              };
+            };
           };
         };
       };
+    };
+
+    sops.secrets.traefik-credentials = {
+      sopsFile = ./secrets.yaml;
+      restartUnits = [ "traefik.service" ];
+      owner = "traefik";
+      group = "traefik";
     };
   };
 }

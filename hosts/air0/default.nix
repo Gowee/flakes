@@ -2,8 +2,9 @@
 {
   imports = with specialArgs;[
     ./configuration.nix
-    ./gateway.nix
+    ./gateway
     ./influxdb2.nix
+    ./pgsql
     self.nixosModules.telegraf
     self.nixosModules.shadowsocks
     # self.nixosModules.vultr
