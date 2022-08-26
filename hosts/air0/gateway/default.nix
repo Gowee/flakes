@@ -7,6 +7,13 @@ with lib;{
     };
   };
   config = mkIf cfg.enable {
+    sops.secrets.traefik-credentials = {
+      sopsFile = ./secrets.yaml;
+      restartUnits = [ "traefik.service" ];
+      owner = "traefik";
+      group = "traefik";
+    };
+
     services.traefik = {
       enable = true;
       staticConfigOptions = {
@@ -144,13 +151,6 @@ with lib;{
           };
         };
       };
-    };
-
-    sops.secrets.traefik-credentials = {
-      sopsFile = ./secrets.yaml;
-      restartUnits = [ "traefik.service" ];
-      owner = "traefik";
-      group = "traefik";
     };
   };
 }
