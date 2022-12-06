@@ -104,6 +104,7 @@
 
   services.gateway.enable = true;
   services.grafana.enable = true;
+  services.grafana.settings.server.http_port = 3000;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
