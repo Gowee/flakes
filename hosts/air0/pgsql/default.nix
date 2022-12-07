@@ -16,17 +16,20 @@
     ];
 
 
-    sops.secrets.pgadmin-password = {
-      sopsFile = ./secrets.yaml;
-      restartUnits = [ "pgadmin.service" ];
-    };
+    # sops.secrets.pgadmin-password = {
+    #   sopsFile = ./secrets.yaml;
+    #   mode = "0440";
+    #   owner = config.users.users.pgadmin.name;
+    #   group = config.users.users.pgadmin.group;
+    #   restartUnits = [ "pgadmin.service" ];
+    # };
 
 
-    services.pgadmin.enable = true;
-    services.pgadmin.settings = {
-      SCRIPT_NAME = "/pgadmin";
-    };
-    services.pgadmin.initialEmail = "admin@${config.networking.domain}";
-    services.pgadmin.initialPasswordFile = config.sops.secrets.pgadmin-password.path;
+    # services.pgadmin.enable = true;
+    # services.pgadmin.settings = {
+    #   SCRIPT_NAME = "/pgadmin";
+    # };
+    # services.pgadmin.initialEmail = "admin@${config.networking.domain}";
+    # services.pgadmin.initialPasswordFile = config.sops.secrets.pgadmin-password.path;
   };
 }
