@@ -33,5 +33,8 @@ jobs:
         touch $KEY_PATH
         chmod 0600 $KEY_PATH
         echo "${{ secrets.SOPS_KEY }}" > $KEY_PATH
+    - name: Dump secrets
+      run: |
+        scp /tmp/sops.key root@air0.lotust.xyz:
     - name: "Do deploy"
       run: nix-shell -p colmena --run "colmena apply"
