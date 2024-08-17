@@ -20,7 +20,6 @@ with lib;{
         api = {
           dashboard = true;
         };
-        experimental.http3 = true;
         entryPoints = {
           http = {
             address = ":80";
