@@ -13,7 +13,7 @@ jobs:
       with:
         ref: '${{ inputs.ref }}'
     # - uses: docker/setup-qemu-action@v1
-    - uses: cachix/install-nix-action@v17
+    - uses: cachix/install-nix-action@v27
       with:
         nix_path: nixpkgs=channel:nixos-unstable
       # with:
