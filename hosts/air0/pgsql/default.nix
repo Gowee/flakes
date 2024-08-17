@@ -6,9 +6,7 @@
     services.postgresql.ensureUsers = [
       {
         name = "lamp";
-        ensurePermissions = {
-          "DATABASE lamp" = "ALL PRIVILEGES";
-        };
+        ensureDBOwnership = true;
       }
     ];
     services.postgresql.ensureDatabases = [
