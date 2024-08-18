@@ -30,4 +30,6 @@
 
   swapDevices = [ ];
 
+
+  networking.usePredictableInterfaceNames = false;
 }
