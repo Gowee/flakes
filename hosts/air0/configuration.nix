@@ -29,7 +29,7 @@
   time.timeZone = "Asia/Shanghai";
 
   networking.firewall.enable = false;
-  networking.domain = "lotust.xyz";
+  networking.domain = "rua.st";
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";

@@ -24,7 +24,7 @@
   networking.interfaces.ens3.useDHCP = true;
 
   networking.firewall.enable = false;
-  networking.domain = "lotust.xyz";
+  networking.domain = "rua.st";
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
