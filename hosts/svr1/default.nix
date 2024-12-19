@@ -4,7 +4,7 @@
     ./configuration.nix
     ./gateway
     ./influxdb2.nix
-    ./pgsql
+    # ./pgsql
     self.nixosModules.telegraf
     self.nixosModules.shadowsocks
     # self.nixosModules.vultr

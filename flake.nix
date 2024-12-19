@@ -19,7 +19,7 @@
           system = "x86_64-linux";
         };
       };
-    } // nixpkgs.lib.genAttrs [ "nah0" "air0" ] (name: {
+    } // nixpkgs.lib.genAttrs [ "nah0" "svr1" ] (name: {
       deployment =
         {
           targetHost = "${name}.rua.st";
