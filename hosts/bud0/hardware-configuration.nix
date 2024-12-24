@@ -37,7 +37,7 @@
             root = {
               label = "SYSTEM";
               size = "100%";
-              # end = "10G";
+              # end = "8G";
               content = {
                 type = "btrfs";
                 extraArgs = [ "-f" ]; # Override existing partition

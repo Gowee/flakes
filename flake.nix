@@ -13,14 +13,13 @@
 
   outputs = inputs@{ self, nixpkgs, disko, sops-nix, ... }: {
     nixosModules = import ./modules;
-    nixosConfigurations.svr1 = nixpkgs.lib.nixosSystem {
+    nixosConfigurations = nixpkgs.lib.genAttrs [ "svr1" "bud0" ] (name: nixpkgs.lib.nixosSystem {
+      specialArgs = { inherit self inputs; };
       system = "x86_64-linux";
       modules = [
-        # disko.nixosModules.disko
-        # sops-nix.nixosModules.sops
-        ./hosts/svr1/configuration.nix
+        ./hosts/${name}
         ];
-    };
+    });
     colmena = {
       meta = {
         specialArgs = {
@@ -31,7 +30,7 @@
           system = "x86_64-linux";
         };
       };
-    } // nixpkgs.lib.genAttrs [ "svr1" ] (name: {
+    } // nixpkgs.lib.genAttrs [ "svr1" "bud0" "nah0" ] (name: {
       deployment =
         {
           targetHost = "${name}.rua.st";
