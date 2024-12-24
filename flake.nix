@@ -3,7 +3,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     disko = {
       url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";  
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     sops-nix = {
       url = "github:mic92/sops-nix";
@@ -18,7 +18,7 @@
       system = "x86_64-linux";
       modules = [
         ./hosts/${name}
-        ];
+      ];
     });
     colmena = {
       meta = {
