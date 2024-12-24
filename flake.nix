@@ -16,8 +16,8 @@
     nixosConfigurations.svr1 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        sops-nix.nixosModules.sops
         disko.nixosModules.disko
+        sops-nix.nixosModules.sops
         ./hosts/svr1/configuration.nix
         ];
     };
