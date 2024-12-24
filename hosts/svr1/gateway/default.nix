@@ -15,7 +15,7 @@ with lib;{
     };
 
     services.traefik = {
-      enable = true;
+      enable = cfg.enable;
       staticConfigOptions = {
         api = {
           dashboard = true;

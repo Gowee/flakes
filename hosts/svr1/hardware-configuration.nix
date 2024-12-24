@@ -19,26 +19,76 @@
     "net.core.default_qdisc" = "cake";
   };
 
-  fileSystems."/" =
-    {
-      device = "/dev/vda1";
-      fsType = "btrfs";
-      options = [ "subvol=root" "compress=zstd" ];
+  disko.devices = {
+    disk = {
+      main = {
+        type = "disk";
+        device = "/dev/vda";
+        content = {
+          type = "gpt";
+          partitions = {
+            boot = {
+              # size = "1M";
+              type = "EF02"; # for grub MBR
+              label = "BOOT";
+              start = "0";
+              end = "+1M";
+            };
+            root = {
+              label = "SYSTEM";
+              # size = "100%";
+              end = "10G";
+              content = {
+                type = "btrfs";
+                extraArgs = [ "-f" ]; # Override existing partition
+                # Subvolumes must set a mountpoint in order to be mounted,
+                # unless their parent is mounted
+                subvolumes = {
+                  # Subvolume name is different from mountpoint
+                  "/@root" = {
+                    mountOptions = [ "compress=zstd" ];
+                    mountpoint = "/";
+                  };
+                  # Subvolume name is the same as the mountpoint
+                  "/@home" = {
+                    mountOptions = [ "compress=zstd" ];
+                    mountpoint = "/home";
+                  };
+                  # # Sub(sub)volume doesn't need a mountpoint as its parent is mounted
+                  # "/home/user" = { };
+                  # Parent is not mounted so the mountpoint must be set
+                  "/@nix" = {
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                    mountpoint = "/nix";
+                  };
+                  # # This subvolume will be created but not mounted
+                  # "/test" = { };
+                  # # Subvolume for the swapfile
+                  # "/swap" = {
+                  #   mountpoint = "/.swapvol";
+                  #   swap = {
+                  #     swapfile.size = "20M";
+                  #     swapfile2.size = "20M";
+                  #     swapfile2.path = "rel-path";
+                  #   };
+                  # };
+                };
+                # mountpoint = "/partition-root";
+                # swap = {
+                #   swapfile = {
+                #     size = "20M";
+                #   };
+                #   swapfile1 = {
+                #     size = "20M";
+                #   };
+                # };
+              };
+            };
+          };
+        };
+      };
     };
-
-  fileSystems."/home" =
-    {
-      device = "/dev/vda1";
-      fsType = "btrfs";
-      options = [ "subvol=home" "compress=zstd" ];
-    };
-
-  fileSystems."/nix" =
-    {
-      device = "/dev/vda1";
-      fsType = "btrfs";
-      options = [ "subvol=nix" "compress=zstd" "noatime" ];
-    };
+  };
 
   swapDevices = [ ];
   # swapDevices = [ { device = "/var/swapfile"; size = 2048; } ];

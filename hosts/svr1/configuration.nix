@@ -13,12 +13,11 @@
 
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;
-  boot.loader.grub.version = 2;
   # boot.loader.grub.efiSupport = true;
   # boot.loader.grub.efiInstallAsRemovable = true;
   # boot.loader.efi.efiSysMountPoint = "/boot/efi";
   # Define on which hard drive you want to install Grub.
-  boot.loader.grub.device = "/dev/vda"; # or "nodev" for efi only
+  # boot.loader.grub.device = "/dev/vda"; # or "nodev" for efi only
 
   networking.hostName = "svr1"; # Define your hostname.
   # Pick only one of the below networking options.
@@ -100,9 +99,9 @@
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
-  services.openssh.passwordAuthentication = false;
+  services.openssh.settings.PasswordAuthentication = false;
 
-  services.gateway.enable = true;
+  # services.gateway.enable = true;
   services.grafana.enable = true;
   services.grafana.settings.server.http_port = 3000;
 
@@ -131,9 +130,6 @@
     age = {
       keyFile = "/run/keys/sops.key";
       generateKey = false;
-    };
-    secrets = {
-      telegraf = { };
     };
   };
 }
