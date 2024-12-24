@@ -4,6 +4,7 @@
     ./configuration.nix
     ./gateway
     ./influxdb2.nix
+    ./tut-pod
     # ./pgsql
     self.nixosModules.telegraf
     self.nixosModules.shadowsocks
