@@ -8,6 +8,7 @@
     # ./pgsql
     self.nixosModules.telegraf
     self.nixosModules.shadowsocks
+    self.nixosModules.gravity
     # self.nixosModules.vultr
     # self.nixosModules.v2ray
     # self.nixosModules.cloud.common

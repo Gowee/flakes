@@ -105,6 +105,44 @@
   services.grafana.enable = true;
   services.grafana.settings.server.http_port = 3000;
 
+  services.gravity = {
+    enable = true;
+    reload.enable = true;
+    divi = {
+      enable = true;
+      prefix = "2a0c:b641:69c:fb34:0:4::/96";
+      oif = "eth0";
+    };
+    # srv6 = {
+    #   enable = true;
+    #   prefix = "2a0c:b641:69c:fb30";
+    # };
+    address = [ "2a0c:b641:69c:fb30::1/128" ];
+    bird = {
+      enable = true;
+      exit.enable = true;
+      prefix = "2a0c:b641:69c:fb30::/60";
+    };
+    
+    ipsec = {
+      enable = true;
+      organization = "lotust";
+      commonName = "svr1";
+      port = 13000;
+      interfaces = [ "eth0" ];
+      endpoints = [
+        {
+          serialNumber = "0";
+          addressFamily = "ip4";
+        }
+        {
+          serialNumber = "1";
+          addressFamily = "ip6";
+        }
+      ];
+    };
+  };
+
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
