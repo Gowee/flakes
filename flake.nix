@@ -42,7 +42,7 @@
           targetHost = "${name}.rua.st";
           keys."sops.key" = {
             keyCommand = [ "sh" "-c" "cat $HOME/.config/sops/age/keys.txt || cat /tmp/sops.key" ];
-            destDir = "/run/keys";
+            destDir = "/var/lib";
             uploadAt = "pre-activation";
           };
         };

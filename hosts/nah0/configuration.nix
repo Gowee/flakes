@@ -121,7 +121,7 @@
   sops = {
     defaultSopsFile = ./secrets.yaml;
     age = {
-      keyFile = "/run/keys/sops.key";
+      keyFile = "/var/lib/sops.key";
       generateKey = false;
     };
     secrets = {
