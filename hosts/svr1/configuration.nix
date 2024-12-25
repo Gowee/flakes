@@ -120,7 +120,7 @@
     address = [ "2a0c:b641:69c:fb30::1/128" ];
     bird = {
       enable = true;
-      exit.enable = true;
+      # exit.enable = true;
       prefix = "2a0c:b641:69c:fb30::/60";
     };
     
