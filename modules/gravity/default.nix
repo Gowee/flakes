@@ -308,7 +308,7 @@ in
             randomize router id;
             interface "${cfg.bird.pattern}" {
               type tunnel;
-              link quality etx;
+              # link quality etx;
               rxcost 32;
               hello interval 20 s;
               rtt cost 1024;
@@ -317,7 +317,7 @@ in
             };
             interface "gn*" {
               type tunnel;
-              link quality etx;
+              # link quality etx;
               rxcost 32;
               hello interval 20 s;
               rtt cost 1024;

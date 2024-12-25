@@ -104,6 +104,7 @@
   # networking.interfaces.enp6s0.useDHCP = lib.mkDefault true;
   networking.usePredictableInterfaceNames = false;
 
+  # gravity relies on systemd.network
   systemd.network.networks = {
     ethernet = {
       matchConfig.Name = [
