@@ -180,6 +180,15 @@ in
           name = config.systemd.network.netdevs.gravity.netdevConfig.Name;
           address = cfg.address;
           linkConfig.RequiredForOnline = false;
+          routes = [
+            {
+              Destination = "2a0c:b641:69c::/48";
+              Source = "2a0c:b641:69c::/48";
+            }
+            {
+              Destination = "${cfg.srv6.prefix}0::1/60";
+            }
+          ];
           routingPolicyRules =
             lib.optionals (cfg.srv6.enable) [
               {
