@@ -127,7 +127,7 @@
     ipsec = {
       enable = true;
       organization = "lotust";
-      commonName = "svr1";
+      commonName = config.networking.hostName;
       port = 13000;
       interfaces = [ "eth0" ];
       endpoints = [
