@@ -20,8 +20,8 @@
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
-  networking.useDHCP = false;
-  networking.interfaces.ens3.useDHCP = true;
+  # networking.useDHCP = false; # check hardware config
+  # networking.interfaces.ens3.useDHCP = true;
 
   networking.firewall.enable = false;
   networking.domain = "rua.st";
@@ -95,19 +95,49 @@
 
   services.gateway.enable = true;
 
+  services.gravity = {
+    enable = true;
+    reload.enable = true;
+    divi = {
+      enable = true;
+      prefix = "2a0c:b641:69c:faf4:0:4::/96";
+      oif = "eth0";
+    };
+    srv6 = {
+      enable = true;
+      prefix = "2a0c:b641:69c:faf";
+    };
+    address = [ "2a0c:b641:69c:faf0::1/128" ];
+    bird = {
+      enable = true;
+      # exit.enable = true;
+      prefix = "2a0c:b641:69c:faf0::/60";
+    };
+
+    ipsec = {
+      enable = true;
+      organization = "lotust";
+      commonName = config.networking.hostName;
+      port = 13000;
+      interfaces = [ "eth0" ];
+      endpoints = [
+        {
+          serialNumber = "0";
+          addressFamily = "ip4";
+        }
+        {
+          serialNumber = "1";
+          addressFamily = "ip6";
+        }
+      ];
+    };
+  };
+
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
-
-  nix = {
-    package = pkgs.nixFlakes;
-    extraOptions = ''
-      experimental-features = nix-command flakes
-    '';
-    autoOptimiseStore = true;
-  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -123,9 +153,6 @@
     age = {
       keyFile = "/var/lib/sops.key";
       generateKey = false;
-    };
-    secrets = {
-      telegraf = { };
     };
   };
 }
