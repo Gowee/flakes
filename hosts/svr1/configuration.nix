@@ -123,7 +123,7 @@
       # exit.enable = true;
       prefix = "2a0c:b641:69c:fb30::/60";
     };
-    
+
     ipsec = {
       enable = true;
       organization = "lotust";

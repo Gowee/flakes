@@ -39,7 +39,7 @@
   networking.useDHCP = false;
   # networking.interfaces.enp1s0.useDHCP = lib.mkDefault true;
   # networking.interfaces.enp6s0.useDHCP = lib.mkDefault true;
-  
+
   # gravity relies on systemd.network
   systemd.network.networks = {
     ethernet = {
