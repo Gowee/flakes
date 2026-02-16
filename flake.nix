@@ -29,7 +29,7 @@
         ./hosts/${name}
       ];
     });
-    colmenaHive = {
+    colmenaHive = colmena.lib.makeHive ({
       meta = {
         specialArgs = {
           inherit inputs;
@@ -50,6 +50,6 @@
           };
         };
       imports = [ ./hosts/${name} ];
-    });
+    }));
   };
 }
