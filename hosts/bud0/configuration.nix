@@ -5,9 +5,6 @@
 { config, pkgs, ... }:
 
 {
-  nixpkgs.config.permittedInsecurePackages = [
-    "mbedtls-2.28.10"
-  ];
   imports =
     [
       # Include the results of the hardware scan.
