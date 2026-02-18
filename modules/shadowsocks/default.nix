@@ -9,7 +9,7 @@
     enable = true;
     port = 8964;
     mode = "tcp_and_udp";
-    fastOpen = false;
+    fastOpen = true;
     passwordFile = config.sops.secrets.shadowsocks-password.path;
     encryptionMethod = "chacha20-ietf-poly1305";
   };

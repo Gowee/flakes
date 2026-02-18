@@ -4,6 +4,7 @@
     ./configuration.nix
     self.nixosModules.cachix
     self.nixosModules.hysteria2
+    self.nixosModules.nix-maintenance
     self.nixosModules.telegraf
     self.nixosModules.shadowsocks
     # self.nixosModules.vultr
