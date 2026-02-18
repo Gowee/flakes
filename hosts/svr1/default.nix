@@ -7,6 +7,7 @@
     ./tut-pod
     # ./pgsql
     self.nixosModules.cachix
+    self.nixosModules.hysteria2
     self.nixosModules.telegraf
     self.nixosModules.shadowsocks
     self.nixosModules.gravity
