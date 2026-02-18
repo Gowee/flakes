@@ -22,7 +22,7 @@
 
   outputs = inputs@{ self, nixpkgs, disko, sops-nix, colmena, ... }: {
     nixosModules = import ./modules;
-    nixosConfigurations = nixpkgs.lib.genAttrs [ "svr1" "bud0" ] (name: nixpkgs.lib.nixosSystem {
+    nixosConfigurations = nixpkgs.lib.genAttrs [ "svr1" "bud0" "nah0" ] (name: nixpkgs.lib.nixosSystem {
       specialArgs = { inherit self inputs; };
       system = "x86_64-linux";
       modules = [

@@ -93,6 +93,13 @@
   services.openssh.enable = true;
   services.openssh.passwordAuthentication = false;
 
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+    memoryPercent = 100;
+    priority = 100;
+  };
+
   services.gateway.enable = true;
 
   services.gravity = {

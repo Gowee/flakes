@@ -101,6 +101,13 @@
   services.openssh.enable = true;
   services.openssh.settings.PasswordAuthentication = false;
 
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+    memoryPercent = 100;
+    priority = 100;
+  };
+
   # services.gateway.enable = true;
   services.grafana.enable = true;
   services.grafana.settings.server.http_port = 3000;
