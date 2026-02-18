@@ -108,6 +108,9 @@
     priority = 100;
   };
 
+  services.hysteria2.listen = ":443";
+
+
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
