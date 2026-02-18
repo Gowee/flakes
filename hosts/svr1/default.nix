@@ -6,6 +6,7 @@
     ./influxdb2.nix
     ./tut-pod
     # ./pgsql
+    self.nixosModules.cachix
     self.nixosModules.telegraf
     self.nixosModules.shadowsocks
     self.nixosModules.gravity

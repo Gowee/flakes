@@ -2,6 +2,7 @@
 {
   imports = with specialArgs;[
     ./configuration.nix
+    self.nixosModules.cachix
     self.nixosModules.telegraf
     self.nixosModules.shadowsocks
     # self.nixosModules.vultr

@@ -4,6 +4,7 @@
     ./configuration.nix
     ./gateway.nix
     #./mongodb
+    self.nixosModules.cachix
     self.nixosModules.telegraf
     self.nixosModules.shadowsocks
     # ./influxdb2.nix

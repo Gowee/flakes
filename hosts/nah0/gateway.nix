@@ -12,7 +12,6 @@ with lib;
       services.traefik = {
         enable = true;
         staticConfigOptions = {
-          experimental.http3 = true;
           entryPoints = {
             http = {
               address = ":80";

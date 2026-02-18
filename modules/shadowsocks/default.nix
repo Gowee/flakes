@@ -13,7 +13,7 @@
     passwordFile = config.sops.secrets.shadowsocks-password.path;
     encryptionMethod = "chacha20-ietf-poly1305";
   };
-  
+
   nixpkgs.config.permittedInsecurePackages = [
     "mbedtls-2.28.10"
   ];
