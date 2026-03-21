@@ -37,6 +37,10 @@
   environment.systemPackages = with pkgs; [
     vim
     tmux
+    bandwhich
+    iperf3
+    tcpdump
+    mtr
   ];
 
   services.openssh.enable = true;
