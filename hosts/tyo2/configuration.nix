@@ -63,7 +63,7 @@
       enable = true;
       prefix = "2a0c:b641:69c:fb4";
     };
-    address = [ "2a0c:b641:69c:fb40::2/128" ];
+    address = [ "2a0c:b641:69c:fb40::1/128" ];
     bird = {
       enable = true;
       prefix = "2a0c:b641:69c:fb40::/60";
