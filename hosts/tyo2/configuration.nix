@@ -15,7 +15,6 @@
 
   networking.firewall.enable = false;
   networking.domain = "rua.st";
-  networking.useNetworkd = true;
 
   users.mutableUsers = false;
   # users.users.admin = {

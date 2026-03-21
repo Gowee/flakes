@@ -6,8 +6,6 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  networking.usePredictableInterfaceNames = false;
-
   # Use Disko to format the disk
   disko.devices = {
     disk = {
@@ -47,4 +45,27 @@
       };
     };
   };
+
+  swapDevices = [ ];
+
+  networking.useNetworkd = true;
+  networking.useDHCP = false;
+
+  # gravity relies on systemd.network
+  systemd.network.networks = {
+    ethernet = {
+      matchConfig.Name = [
+        "en*"
+        "eth*"
+      ];
+      DHCP = "yes";
+      networkConfig = {
+        KeepConfiguration = "yes";
+        IPv6AcceptRA = "yes";
+        IPv6PrivacyExtensions = "no";
+      };
+    };
+  };
+
+  networking.usePredictableInterfaceNames = false;
 }
