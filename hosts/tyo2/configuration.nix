@@ -11,7 +11,7 @@
 
 
   networking.hostName = "tyo2";
-  time.timeZone = "Asia/Tokyo";
+  time.timeZone = "Asia/Shanghai";
 
   networking.firewall.enable = false;
   networking.domain = "rua.st";
@@ -56,17 +56,17 @@
     reload.enable = true;
     divi = {
       enable = true;
-      prefix = "2a0c:b641:69c:fb34:0:4::/96";
+      prefix = "2a0c:b641:69c:fb40:0:4::/96";
       oif = "eth0";
     };
     srv6 = {
       enable = true;
-      prefix = "2a0c:b641:69c:fb3";
+      prefix = "2a0c:b641:69c:fb4";
     };
-    address = [ "2a0c:b641:69c:fb30::2/128" ];
+    address = [ "2a0c:b641:69c:fb40::2/128" ];
     bird = {
       enable = true;
-      prefix = "2a0c:b641:69c:fb30::/60";
+      prefix = "2a0c:b641:69c:fb40::/60";
     };
 
     ipsec = {
@@ -88,7 +88,7 @@
     };
   };
 
-  system.stateVersion = "24.11";
+  system.stateVersion = "25.11";
 
   sops = {
     defaultSopsFile = ./secrets.yaml;

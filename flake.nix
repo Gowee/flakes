@@ -18,13 +18,9 @@
     colmena = {
       url = "github:zhaofengli/colmena/v0.4.0";
     };
-    nixos-anywhere = {
-      url = "github:nix-community/nixos-anywhere";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
-  outputs = inputs@{ self, nixpkgs, disko, sops-nix, colmena, nixos-anywhere, ... }: {
+  outputs = inputs@{ self, nixpkgs, disko, sops-nix, colmena, ... }: {
     nixosModules = import ./modules;
     nixosConfigurations = nixpkgs.lib.genAttrs [ "svr1" "bud0" "nah0" "tyo2" ] (name: nixpkgs.lib.nixosSystem {
       specialArgs = { inherit self inputs; };
@@ -33,7 +29,6 @@
         ./hosts/${name}
       ];
     });
-    packages.x86_64-linux.nixos-anywhere = nixos-anywhere.packages.x86_64-linux.default;
     colmenaHive = colmena.lib.makeHive ({
       meta = {
         specialArgs = {
