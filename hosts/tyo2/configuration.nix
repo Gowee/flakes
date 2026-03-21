@@ -60,7 +60,7 @@
     reload.enable = true;
     divi = {
       enable = true;
-      prefix = "2a0c:b641:69c:fb40:0:4::/96";
+      prefix = "2a0c:b641:69c:fb44:0:4::/96";
       oif = "eth0";
     };
     srv6 = {
