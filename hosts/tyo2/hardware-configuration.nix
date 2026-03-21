@@ -6,6 +6,8 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
+  networking.usePredictableInterfaceNames = false;
+
   # Use Disko to format the disk
   disko.devices = {
     disk = {
