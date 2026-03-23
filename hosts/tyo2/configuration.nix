@@ -41,7 +41,6 @@
     iperf3
     tcpdump
     mtr
-    vnstati
     jq
   ];
 
