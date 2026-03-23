@@ -51,7 +51,6 @@
   # Bandwidth Monitoring
   services.vnstat = {
     enable = true;
-    interface = "eth0";
   };
 
   systemd.services.traffic-limiter = {
@@ -62,7 +61,7 @@
         #!/bin/sh
         # 950GiB in KiB
         LIMIT_KIB=996147200
-        TOTAL_KIB=$(vnstat --json m 1 | ${pkgs.jq}/bin/jq '.interfaces[0].traffic.months[0].total')
+        TOTAL_KIB=$(vnstat -i eth0 --json m 1 | ${pkgs.jq}/bin/jq '.interfaces[0].traffic.months[0].total')
 
         if [ "$TOTAL_KIB" -gt "$LIMIT_KIB" ]; then
           ${pkgs.systemd}/bin/shutdown now
