@@ -94,7 +94,7 @@
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
-  services.openssh.passwordAuthentication = false;
+  services.openssh.settings.PasswordAuthentication = false;
 
   zramSwap = {
     enable = true;
