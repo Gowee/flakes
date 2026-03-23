@@ -15,9 +15,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
+    colmena = {
+      url = "github:zhaofengli/colmena/v0.4.0";
+    };
   };
 
-  outputs = inputs@{ self, nixpkgs, disko, sops-nix, ... }: {
+  outputs = inputs@{ self, nixpkgs, disko, sops-nix, colmena, ... }: {
     nixosModules = import ./modules;
     nixosConfigurations = nixpkgs.lib.genAttrs [ "svr1" "bud0" ] (name: nixpkgs.lib.nixosSystem {
       specialArgs = { inherit self inputs; };
@@ -26,7 +29,7 @@
         ./hosts/${name}
       ];
     });
-    colmena = {
+    colmenaHive = {
       meta = {
         specialArgs = {
           inherit inputs;
