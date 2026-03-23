@@ -9,6 +9,7 @@
     self.nixosModules.nix-maintenance
     self.nixosModules.telegraf
     self.nixosModules.shadowsocks
+    self.nixosModules.common
     # ./influxdb2.nix
     self.nixosModules.gravity
     # self.nixosModules.vultr

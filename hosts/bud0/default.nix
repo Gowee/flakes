@@ -7,6 +7,7 @@
     self.nixosModules.nix-maintenance
     self.nixosModules.telegraf
     self.nixosModules.shadowsocks
+    self.nixosModules.common
     # self.nixosModules.vultr
     # self.nixosModules.v2ray
     # self.nixosModules.cloud.common
