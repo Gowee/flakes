@@ -41,10 +41,44 @@
     iperf3
     tcpdump
     mtr
+    vnstati
+    jq
   ];
 
   services.openssh.enable = true;
   services.openssh.settings.PasswordAuthentication = false;
+
+  # Bandwidth Monitoring
+  services.vnstat = {
+    enable = true;
+    interface = "eth0";
+  };
+
+  systemd.services.traffic-limiter = {
+    description = "Traffic Limiter";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = pkgs.writeShellScript "traffic-limiter" ''
+        #!/bin/sh
+        # 950GiB in KiB
+        LIMIT_KIB=996147200
+        TOTAL_KIB=$(vnstat --json m 1 | ${pkgs.jq}/bin/jq '.interfaces[0].traffic.months[0].total')
+
+        if [ "$TOTAL_KIB" -gt "$LIMIT_KIB" ]; then
+          ${pkgs.systemd}/bin/shutdown now
+        fi
+      '';
+    };
+  };
+
+  systemd.timers.traffic-limiter = {
+    description = "Run traffic limiter every hour";
+    timerConfig = {
+      OnCalendar = "hourly";
+      Persistent = true;
+    };
+    wantedBy = [ "timers.target" ];
+  };
 
   zramSwap = {
     enable = true;
