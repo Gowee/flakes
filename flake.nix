@@ -21,36 +21,38 @@
   };
 
   outputs = inputs@{ self, nixpkgs, flake-utils, disko, sops-nix, colmena, ... }:
+    let
+      colmenaHive = colmena.lib.makeHive ({
+        meta = {
+          nixpkgs = nixpkgs;
+          specialArgs = {
+            inherit inputs;
+            inherit self;
+          };
+        };
+      } // nixpkgs.lib.genAttrs [ "svr1" "bud0" "nah0" "tyo2" ] (name: {
+        deployment =
+          {
+            targetHost = "${name}.rua.st";
+            keys."sops.key" = {
+              keyCommand = [ "sh" "-c" "cat $HOME/.config/sops/age/keys.txt || cat /tmp/sops.key" ];
+              destDir = "/var/lib";
+              uploadAt = "pre-activation";
+            };
+          };
+        imports = [ ./hosts/${name} ];
+      }));
+    in
     flake-utils.lib.eachDefaultSystem
       (system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
         in
         {
-          legacyPackages.colmena = colmena.lib.makeHive ({
-            meta = {
-              specialArgs = {
-                inherit inputs;
-                inherit self;
-              };
-              nixpkgs = import nixpkgs {
-                inherit system;
-              };
-            };
-          } // nixpkgs.lib.genAttrs [ "svr1" "bud0" "nah0" "tyo2" ] (name: {
-            deployment =
-              {
-                targetHost = "${name}.rua.st";
-                keys."sops.key" = {
-                  keyCommand = [ "sh" "-c" "cat $HOME/.config/sops/age/keys.txt || cat /tmp/sops.key" ];
-                  destDir = "/var/lib";
-                  uploadAt = "pre-activation";
-                };
-              };
-            imports = [ ./hosts/${name} ];
-          }));
+          legacyPackages.colmena = colmenaHive;
         }
       ) // {
+      colmena = colmenaHive;
       nixosModules = import ./modules;
       nixosConfigurations = nixpkgs.lib.genAttrs [ "svr1" "bud0" "nah0" "tyo2" ] (name: nixpkgs.lib.nixosSystem {
         specialArgs = { inherit self inputs; };

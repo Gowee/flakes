@@ -11,4 +11,9 @@
     strace # system call tracer
     lsof # list open files
   ];
+
+  programs.fish.enable = true;
+
+  users.defaultUserShell = pkgs.fish;
+  users.users.root.shell = pkgs.fish;
 }
