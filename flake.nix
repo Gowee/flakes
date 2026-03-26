@@ -22,9 +22,11 @@
 
   outputs = inputs@{ self, nixpkgs, flake-utils, disko, sops-nix, colmena, ... }:
     let
-      colmenaHive = colmena.lib.makeHive ({
+      colmenaConfig = {
         meta = {
-          nixpkgs = nixpkgs;
+          nixpkgs = import nixpkgs {
+            system = "x86_64-linux";
+          };
           specialArgs = {
             inherit inputs;
             inherit self;
@@ -41,7 +43,7 @@
             };
           };
         imports = [ ./hosts/${name} ];
-      }));
+      });
     in
     flake-utils.lib.eachDefaultSystem
       (system:
@@ -49,10 +51,10 @@
           pkgs = nixpkgs.legacyPackages.${system};
         in
         {
-          legacyPackages.colmena = colmenaHive;
+          legacyPackages.colmena = colmenaConfig;
         }
       ) // {
-      colmena = colmenaHive;
+      colmena = colmenaConfig;
       nixosModules = import ./modules;
       nixosConfigurations = nixpkgs.lib.genAttrs [ "svr1" "bud0" "nah0" "tyo2" ] (name: nixpkgs.lib.nixosSystem {
         specialArgs = { inherit self inputs; };
