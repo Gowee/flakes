@@ -52,5 +52,9 @@ Shared functionality used across multiple hosts.
 
 ## Engineering Standards
 - **Commits:** Follow conventional commit messages (e.g., `feat: ...`, `fix: ...`, `refactor: ...`).
+- **Formatting:** Use `nixpkgs-fmt` for all Nix files. You can run it via:
+  ```bash
+  nix run nixpkgs#nixpkgs-fmt -- .
+  ```
 - **Validation:** Always verify configuration changes before applying.
 - **Persistence:** Keep configurations for decommissioned instances commented out rather than deleted, unless specified otherwise.
