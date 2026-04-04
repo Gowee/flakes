@@ -32,7 +32,7 @@
             inherit self;
           };
         };
-      } // nixpkgs.lib.genAttrs [ "svr1" "bud0" "nah0" "tyo2" ] (name: {
+      } // nixpkgs.lib.genAttrs [ "svr1" "nah0" "tyo2" /* "bud0" */ ] (name: {
         deployment =
           {
             targetHost = "${name}.rua.st";
@@ -56,7 +56,7 @@
       ) // {
       colmena = colmenaConfig;
       nixosModules = import ./modules;
-      nixosConfigurations = nixpkgs.lib.genAttrs [ "svr1" "bud0" "nah0" "tyo2" ] (name: nixpkgs.lib.nixosSystem {
+      nixosConfigurations = nixpkgs.lib.genAttrs [ "svr1" "nah0" "tyo2" /* "bud0" */ ] (name: nixpkgs.lib.nixosSystem {
         specialArgs = { inherit self inputs; };
         system = "x86_64-linux";
         modules = [
