@@ -57,4 +57,5 @@ Shared functionality used across multiple hosts.
   nix run nixpkgs#nixpkgs-fmt -- .
   ```
 - **Validation:** Always verify configuration changes before applying.
+- **Pushing:** After successful deployment and committing, always push the changes to the remote repository.
 - **Persistence:** Keep configurations for decommissioned instances commented out rather than deleted, unless specified otherwise.
