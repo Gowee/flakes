@@ -376,6 +376,12 @@ in
           }
           { Destination = "10.201.0.0/16"; }
         ];
+        routingPolicyRules = [
+          {
+            Table = cfg.table;
+            Priority = 2000;
+          }
+        ];
         networkConfig.LinkLocalAddressing = false;
         linkConfig.RequiredForOnline = false;
       };
@@ -391,6 +397,12 @@ in
             Table = cfg.table;
           }
           { Destination = cfg.divi.dynamic-pool; }
+        ];
+        routingPolicyRules = [
+          {
+            Table = cfg.table;
+            Priority = 2000;
+          }
         ];
         networkConfig.LinkLocalAddressing = false;
         linkConfig.RequiredForOnline = false;
