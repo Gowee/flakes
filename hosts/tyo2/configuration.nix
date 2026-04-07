@@ -172,17 +172,31 @@
     linkConfig.RequiredForOnline = false;
   };
 
-  systemd.network.networks.divi.routingPolicyRules = [{
-    From = "10.200.0.0/16";
-    Table = 1000;
-    Priority = 1000;
-  }];
+  systemd.network.networks.divi.routingPolicyRules = [
+    {
+      From = "10.200.0.0/16";
+      Table = 1000;
+      Priority = 1000;
+    }
+    {
+      To = "2a0c:b641:69c::/48";
+      Table = 200;
+      Priority = 1000;
+    }
+  ];
 
-  systemd.network.networks.nat64.routingPolicyRules = [{
-    From = "10.201.0.0/16";
-    Table = 1000;
-    Priority = 1000;
-  }];
+  systemd.network.networks.nat64.routingPolicyRules = [
+    {
+      From = "10.201.0.0/16";
+      Table = 1000;
+      Priority = 1000;
+    }
+    {
+      To = "2a0c:b641:69c::/48";
+      Table = 200;
+      Priority = 1000;
+    }
+  ];
 
   system.stateVersion = "25.11";
 
