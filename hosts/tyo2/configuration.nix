@@ -125,7 +125,10 @@
     };
   };
 
-  sops.secrets.warp_private_key = { };
+  sops.secrets.warp_private_key = {
+    owner = "systemd-network";
+    restartUnits = [ "systemd-networkd.service" ];
+  };
 
   systemd.network.netdevs."10-wg-warp" = {
     netdevConfig = {
