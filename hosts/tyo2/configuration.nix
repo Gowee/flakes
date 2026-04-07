@@ -93,7 +93,7 @@
     divi = {
       enable = true;
       prefix = "2a0c:b641:69c:fb44:0:4::/96";
-      oif = "eth0";
+      oif = "wg-warp";
     };
     srv6 = {
       enable = true;
@@ -123,6 +123,62 @@
       ];
     };
   };
+
+  sops.secrets.warp_private_key = { };
+
+  systemd.network.netdevs."10-wg-warp" = {
+    netdevConfig = {
+      Kind = "wireguard";
+      Name = "wg-warp";
+      MTUBytes = "1280";
+    };
+    wireguardConfig = {
+      PrivateKeyFile = config.sops.secrets.warp_private_key.path;
+      RouteTable = false;
+    };
+    wireguardPeers = [{
+      wireguardPeerConfig = {
+        PublicKey = "bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=";
+        Endpoint = "engage.cloudflareclient.com:2408";
+        AllowedIPs = [
+          "0.0.0.0/0"
+          "::/0"
+        ];
+      };
+    }];
+  };
+
+  systemd.network.networks."10-wg-warp" = {
+    name = "wg-warp";
+    # These addresses are assigned by Cloudflare Warp during registration
+    address = [
+      "172.16.0.2/32"
+      "fd01:5ca1:ab1e::1/128"
+    ];
+    routes = [
+      {
+        Destination = "0.0.0.0/0";
+        Table = 1000;
+      }
+      {
+        Destination = "::/0";
+        Table = 1000;
+      }
+    ];
+    linkConfig.RequiredForOnline = false;
+  };
+
+  systemd.network.networks.divi.routingPolicyRules = [{
+    From = "10.200.0.0/16";
+    Table = 1000;
+    Priority = 1000;
+  }];
+
+  systemd.network.networks.nat64.routingPolicyRules = [{
+    From = "10.201.0.0/16";
+    Table = 1000;
+    Priority = 1000;
+  }];
 
   system.stateVersion = "25.11";
 
