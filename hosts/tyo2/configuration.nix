@@ -15,6 +15,7 @@
 
   networking.firewall.enable = false;
   networking.domain = "rua.st";
+  systemd.network.enable = true;
 
   users.mutableUsers = false;
   # users.users.admin = {
