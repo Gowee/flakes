@@ -10,5 +10,6 @@
     self.nixosModules.common
     inputs.sops-nix.nixosModules.sops
     inputs.disko.nixosModules.disko
+    self.nixosModules.config-revision
   ];
 }

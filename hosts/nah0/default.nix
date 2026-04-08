@@ -26,5 +26,6 @@
     # }
     inputs.sops-nix.nixosModules.sops
     # inputs.impermanence.nixosModules.impermanence
+    self.nixosModules.config-revision
   ];
 }
