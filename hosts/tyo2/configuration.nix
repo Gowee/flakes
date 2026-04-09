@@ -184,6 +184,11 @@
     Priority = 1000;
   }];
 
+  systemd.network.networks.lo = {
+    matchConfig.Name = "lo";
+    address = [ "43.206.228.28/32" ];
+  };
+
   system.stateVersion = "25.11";
 
   sops = {
