@@ -13,6 +13,8 @@
     lsof # list open files
   ];
 
+  services.vnstat.enable = true;
+
   programs.fish.enable = true;
 
   users.defaultUserShell = pkgs.fish;

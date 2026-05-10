@@ -49,10 +49,6 @@
   services.openssh.settings.PasswordAuthentication = false;
 
   # Bandwidth Monitoring
-  services.vnstat = {
-    enable = true;
-  };
-
   systemd.services.traffic-limiter = {
     description = "Traffic Limiter";
     serviceConfig = {
