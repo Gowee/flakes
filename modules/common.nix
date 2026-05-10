@@ -2,9 +2,10 @@
 {
   environment.systemPackages = with pkgs; [
     # DNS utility
-    drill
+    ldns
 
     # Suggested utilities
+    nmap
     htop # interactive process viewer
     ncdu # disk usage analyzer
     tshark # terminal-based wireshark
