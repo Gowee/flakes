@@ -19,6 +19,10 @@ Each subdirectory represents a specific machine (e.g., `svr1`, `tyo2`).
 ### 3. Modules Directory (`modules/`)
 Shared functionality used across multiple hosts.
 - `default.nix`: Acts as an index for all modules. Add new modules here to make them available via `self.nixosModules`.
+- `common.nix`: The base configuration imported by **all active nodes**. Use this for:
+    - Global system packages (utilities like `htop`, `ncdu`, `ldns`).
+    - Core services that must be enabled everywhere (e.g., `vnstat`).
+    - Shared shell or user preferences.
 - Individual modules (e.g., `shadowsocks/`, `hysteria2/`) typically contain:
     - `default.nix`: The module logic.
     - `secrets.yaml`: Module-specific encrypted secrets.
