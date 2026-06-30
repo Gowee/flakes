@@ -113,8 +113,16 @@
   };
 
   # services.gateway.enable = true;
+  sops.secrets.grafana_secret_key = {
+    sopsFile = ./secrets.yaml;
+    owner = "grafana";
+    group = "grafana";
+  };
+
   services.grafana.enable = true;
   services.grafana.settings.server.http_port = 3000;
+  services.grafana.settings.security.secret_key =
+    "$__file{${config.sops.secrets.grafana_secret_key.path}}";
 
   services.gravity = {
     enable = true;
