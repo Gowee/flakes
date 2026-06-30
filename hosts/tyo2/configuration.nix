@@ -90,7 +90,7 @@
     divi = {
       enable = true;
       prefix = "2a0c:b641:69c:fb44:0:4::/96";
-      # oif = "wg-warp";
+      oif = "eth0";
     };
     srv6 = {
       enable = true;
