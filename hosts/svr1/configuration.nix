@@ -145,7 +145,7 @@
 
     ipsec = {
       enable = true;
-      organization = "lotust";
+      organization = "gowee";
       commonName = config.networking.hostName;
       port = 13000;
       interfaces = [ "eth0" ];
