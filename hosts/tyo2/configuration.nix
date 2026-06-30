@@ -182,7 +182,7 @@
 
   systemd.network.networks.lo = {
     matchConfig.Name = "lo";
-    address = [ "43.206.228.28/32" ];
+    address = [ "216.23.121.85/32" ];
   };
 
   system.stateVersion = "25.11";
