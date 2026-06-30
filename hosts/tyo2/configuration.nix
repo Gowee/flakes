@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports =
@@ -119,6 +119,12 @@
         }
       ];
     };
+  };
+
+  # Use dedicated IPSec key instead of shared one from modules/gravity,
+  # as tyo2's server provider is less trusted.
+  sops.secrets.ipsec = lib.mkForce {
+    sopsFile = ./secrets.yaml;
   };
 
   sops.secrets.warp_private_key = {
