@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, infraDomain, ... }:
 
 {
   imports =
@@ -28,7 +28,7 @@
   time.timeZone = "Asia/Shanghai";
 
   networking.firewall.enable = false;
-  networking.domain = "rua.st";
+  networking.domain = infraDomain;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";

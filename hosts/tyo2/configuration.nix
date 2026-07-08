@@ -78,7 +78,7 @@
   sops = {
     defaultSopsFile = ./secrets.yaml;
     age = {
-      keyFile = "/var/lib/sops.key";
+      keyFile = "/persist/var/lib/sops.key";
       generateKey = false;
     };
   };
@@ -163,6 +163,17 @@
   };
   services.openssh = {
     enable = true;
+    hostKeys = [
+      {
+        type = "rsa";
+        bits = 4096;
+        path = "/persist/etc/ssh/ssh_host_rsa_key";
+      }
+      {
+        type = "ed25519";
+        path = "/persist/etc/ssh/ssh_host_ed25519_key";
+      }
+    ];
     settings = {
       PermitRootLogin = "prohibit-password";
       PasswordAuthentication = false;
@@ -282,16 +293,6 @@
     ];
     files = [
       "/etc/machine-id"
-      # sops.key persisted so sops-nix works after reboot without re-deploy.
-      # Colmena overwrites it at every deploy (pre-activation), so staleness
-      # is not a concern — the key is always fresh after any deploy.
-      { file = "/var/lib/sops.key"; parentDirectory = { mode = "u=rwx,g=,o="; }; }
-      # SSH host keys — persist to avoid TOFU warnings on every boot.
-      # sshd_config is a NixOS-managed symlink, NOT persisted (always fresh).
-      "/etc/ssh/ssh_host_ed25519_key"
-      "/etc/ssh/ssh_host_ed25519_key.pub"
-      "/etc/ssh/ssh_host_rsa_key"
-      "/etc/ssh/ssh_host_rsa_key.pub"
     ];
   };
 }

@@ -15,8 +15,8 @@ let
     listen: ${cfg.listen}
     acme:
       domains:
-        - ${config.networking.hostName}.rua.st
-      email: admin@rua.st
+        - ${config.networking.hostName}.${config.networking.domain}
+      email: admin@${config.networking.domain}
     auth:
       type: command
       command: ${checkPasswordScript}

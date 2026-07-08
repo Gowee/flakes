@@ -7,4 +7,5 @@
   nix-maintenance = import ./nix-maintenance.nix;
   common = import ./common.nix;
   config-revision = import ./config-revision.nix;
+  keywa-pin = import ./keywa-pin;
 }

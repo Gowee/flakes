@@ -26,6 +26,33 @@ let
     chmod 400 /tmp/luks-key
     echo "LUKS key fetched successfully."
   '';
+
+  # The initrd-ssh-fingerprint script. Bound to a name so we can add it
+  # to storePaths (which copies it into the initrd CPIO).
+  initrdSshFingerprintScript = pkgs.writeShellScript "initrd-ssh-fingerprint" ''
+    echo ""
+    echo "============================================================"
+    echo "  INITRD SSH HOST KEY FINGERPRINT (verify before connecting)"
+    echo "============================================================"
+    ${pkgs.openssh}/bin/ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
+    echo "  Key is stable per image — regenerate to change."
+    echo "============================================================"
+    echo ""
+  '';
+
+  # Build-time initrd SSH host key. Baked into /nix/store and copied into
+  # the initrd via boot.initrd.secrets. Stable per image — operator verifies
+  # fingerprint once per image (printed to console by initrd-ssh-fingerprint).
+  #
+  # Security note: This key lives in /nix/store, same as any other build-time
+  # secret. Low risk — it's only for ephemeral recovery access during initrd,
+  # not the LUKS volume or persistent data.
+  initrdSshHostKey = pkgs.runCommand "${cfg.secretId}-initrd-ssh-host-key"
+    {
+      nativeBuildInputs = [ pkgs.openssh ];
+    } ''
+    ssh-keygen -t ed25519 -f $out -N ""
+  '';
 in
 {
   options.keywa-pin = {
@@ -128,6 +155,10 @@ in
       before = [ "cryptsetup-pre.target" ];
       after = [ "network-online.target" ];
       requires = [ "network-online.target" ];
+      # DefaultDependencies=yes adds implicit After=sysinit.target, creating ordering cycle:
+      # fetch-luks-key → sysinit.target → cryptsetup.target → systemd-cryptsetup@cryptroot → fetch-luks-key
+      # All real deps are explicit above; no need for default ordering.
+      unitConfig.DefaultDependencies = false;
       # storePaths below copies the actual script into the initrd CPIO.
       # Without this, the unit's ExecStart path is a /nix/store path
       # that doesn't exist in the initrd, and the service fails with
@@ -149,7 +180,7 @@ in
     };
     # Copy the fetch-luks-key script into the initrd CPIO. Without this,
     # the unit's ExecStart path doesn't exist at runtime.
-    boot.initrd.systemd.storePaths = [ fetchLukSKeyScript ];
+    boot.initrd.systemd.storePaths = [ fetchLukSKeyScript initrdSshFingerprintScript pkgs.openssh ];
 
     # ╔═════════════════════════════════════════════════════════════════╗
     # ║ RUNTIME: initrd network                                       ║
@@ -175,15 +206,13 @@ in
     # ║ Allows operator SSH access during initrd for manual recovery  ║
     # ║ (e.g., Telegram unavailable, network down). Lands in /bin/sh. ║
     # ║                                                                 ║
-    # ║ Host key: STABLE PER IMAGE, embedded in the initrd at build  ║
-    # ║ time via NixOS's boot.initrd.secrets mechanism. Lives in the  ║
-    # ║ initrd on the encrypted rootfs. Per-image TOFU — operator     ║
-    # ║ verifies fingerprint once per image (printed to console).    ║
+    # ║ Host key: STABLE PER IMAGE, generated at build time and       ║
+    # ║ baked into /nix/store. Copied into initrd via                 ║
+    # ║ boot.initrd.secrets. Per-image TOFU — operator verifies       ║
+    # ║ fingerprint once per image (printed to console).              ║
     # ║                                                                 ║
-    # ║ NOT ephemeral per boot (we tried — breaks disko image build   ║
-    # ║ because NixOS expects the key at install time). The key is    ║
-    # ║ baked into /nix/store and copied into the initrd by the       ║
-    # ║ standard boot.initrd.secrets mechanism.                        ║
+    # ║ NOT random per boot (we tried — NixOS now requires pre-       ║
+    # ║ generated host keys for initrd SSH).                           ║
     # ║                                                                 ║
     # ║ Rescue/emergency services in initrd are NOT disabled here —  ║
     # ║ SSH is the primary fallback path, but emergency.target        ║
@@ -195,25 +224,17 @@ in
       after = [ "sshd.service" ];
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = pkgs.writeShellScript "initrd-ssh-fingerprint" ''
-          echo ""
-          echo "============================================================"
-          echo "  INITRD SSH HOST KEY FINGERPRINT (verify before connecting)"
-          echo "============================================================"
-          ${pkgs.openssh}/bin/ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
-          echo "  Key is stable for this image (regenerate to change)."
-          echo "============================================================"
-          echo ""
-        '';
+        ExecStart = "${initrdSshFingerprintScript}";
       };
     };
-    # initrd SSH host key: NixOS generates a random key per boot.
-    # No TOFU — fingerprint printed to console for manual verification.
+    # initrd SSH host key: stable per image, generated at build time.
+    # The key is in /nix/store (same as any build-time secret). Low risk —
+    # initrd SSH is ephemeral recovery access only, not the LUKS volume.
     boot.initrd.network.ssh = {
       enable = true;
       port = 22;
       authorizedKeys = cfg.sshAuthorizedKeys;
-      hostKeys = [ "/etc/ssh/ssh_host_ed25519_key" ];
+      hostKeys = [ initrdSshHostKey ];
     };
     boot.initrd.systemd.services."emergency.service".enable = false;
     boot.initrd.systemd.services."rescue.service".enable = false;

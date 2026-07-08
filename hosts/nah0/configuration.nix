@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, infraDomain, ... }:
 
 {
   imports =
@@ -24,7 +24,7 @@
   # networking.interfaces.ens3.useDHCP = true;
 
   networking.firewall.enable = false;
-  networking.domain = "rua.st";
+  networking.domain = infraDomain;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
