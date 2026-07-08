@@ -1,7 +1,29 @@
 keys:
   - &primary age1z38q08es3vmn8enk7zjzcvekp23698u9l5dxkgjch2y6lc3h09jsf7kfas
+  - &svr1 age1hrtk8mjh9krsqk8k65ztkyeqwaju3elgka83dufy5gdm0vu0ygqq0xkj25
+  - &tyo2 age12ryhr9lh6u42ergen7k4f4c79pdk6rqgrly6um5yyfxlj062g3lsm2ljh2
+  - &nah0 age1skg3exn8yjve0zczv7p4sqyfscryaff7vj2gtf77pr3djfperf0qp9n9lj
+
 creation_rules:
-  - path_regex: .*
+  - path_regex: hosts/svr1/.*
     key_groups:
     - age:
       - *primary
+      - *svr1
+  - path_regex: hosts/tyo2/.*
+    key_groups:
+    - age:
+      - *primary
+      - *tyo2
+  - path_regex: modules/.*
+    key_groups:
+    - age:
+      - *primary
+      - *svr1
+      - *tyo2
+      - *nah0
+  - path_regex: hosts/nah0/.*
+    key_groups:
+    - age:
+      - *primary
+      - *nah0

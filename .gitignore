@@ -1,4 +1,6 @@
 .vscode/
 sops.key
+secrets/
 
 result
+main.raw
