@@ -13,7 +13,7 @@
   # ── Host identity ─────────────────────────────────────────────────────
   networking.hostName = "tyo2";
   networking.domain = infraDomain;
-  time.timeZone = "Asia/Shanghai";
+  time.timeZone = "Asia/Taipei";
   system.stateVersion = "25.11";
 
   # ── Bootloader — GRUB on BIOS (GPT + EF02) ────────────────────────────
