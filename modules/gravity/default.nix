@@ -501,6 +501,11 @@ in
           ${toString stateful} stateful
         '';
       };
+      # Bind to the gravity VRF device unit so this service only starts once
+      # `dev gravity` actually exists in /sys/class/net/. network-online.target
+      # alone is unreliable — on hosts with initrd networking (e.g. tyo2's
+      # keywa-pin) it can fire before systemd-networkd creates the VRFs.
+      # BindsTo (vs plain After) also tears the routes down if gravity disappears.
       systemd.services.gravity-srv6 = {
         path = with pkgs; [ iproute2 ];
         serviceConfig =
@@ -518,8 +523,12 @@ in
             ExecStart = builtins.map (route: "${pkgs.iproute2}/bin/ip -6 r a ${route}") routes;
             ExecStop = builtins.map (route: "${pkgs.iproute2}/bin/ip -6 r d ${route}") routes;
           };
-        after = [ "network-online.target" ];
+        after = [
+          "network-online.target"
+          "sys-subsystem-net-devices-gravity.device"
+        ];
         wants = [ "network-online.target" ];
+        bindsTo = [ "sys-subsystem-net-devices-gravity.device" ];
         wantedBy = [ "multi-user.target" ];
       };
     })
@@ -569,7 +578,10 @@ in
           unitConfig = {
             AssertFileNotEmpty = "/var/lib/gravity/registry.json";
           };
-          bindsTo = [ "strongswan-swanctl.service" ];
+          bindsTo = [
+            "strongswan-swanctl.service"
+            "sys-subsystem-net-devices-gravity.device"
+          ];
           wants = [
             "network-online.target"
             "strongswan-swanctl.service"
@@ -577,6 +589,7 @@ in
           after = [
             "network-online.target"
             "strongswan-swanctl.service"
+            "sys-subsystem-net-devices-gravity.device"
           ];
           wantedBy = [ "multi-user.target" ];
           reloadTriggers = [ config.environment.etc."ranet/config.json".source ];
