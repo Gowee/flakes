@@ -6,9 +6,9 @@ Multi-host NixOS configuration using **Nix Flakes**, **Colmena**, **sops-nix**, 
 
 | Host | Role | Special |
 |---|---|---|
-| `svr1` | Main server (Shanghai TZ) | grafana, podman, telegraf, influxdb2 |
-| `nah0` | Secondary server | gateway enabled |
-| `tyo2` | Less-trusted VPS (Tokyo TZ) | **impermanence + keywa-pin + dedicated IPSec key** |
+| `svr1` | Shanghai TZ | grafana, podman, telegraf, influxdb2 |
+| `nah0` | Shanghai TZ | gateway enabled |
+| `tyo2` | Tokyo TZ | **impermanence + keywa-pin + dedicated IPSec key** |
 | `bud0` | Decommissioned — comment kept in flake.nix, dir retained | |
 
 Hostname → targetHost: `${name}.${infraDomain}` where `infraDomain = "rua.st"` (single source of truth in `flake.nix`).
