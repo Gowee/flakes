@@ -8,7 +8,6 @@
 
   boot.loader.grub = {
     enable = true;
-    device = "/dev/sda";
   };
 
   boot.kernelParams = [ "panic=1" "sysrq=0" ];
