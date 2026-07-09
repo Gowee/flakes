@@ -8,4 +8,5 @@
   common = import ./common.nix;
   config-revision = import ./config-revision.nix;
   keywa-pin = import ./keywa-pin;
+  keywa-sops = import ./keywa-sops;
 }

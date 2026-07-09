@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# workaround for: https://github.com/nix-community/disko/issues/1262
+set -eu
+
+SCRIPT_PATH=$(nix build '.#nixosConfigurations.nium0.config.system.build.diskoImagesScript' --no-link --print-out-paths 2>&1 | tail -1)
+VM_RUN="/nix/store/gl7bfccna0pi2gh2hrbf6d9f0gqi6vqi-vm-run"
+STAGE2="/nix/store/bj2mbv63lkkrwz44wl8ybb5mwnyqsn95-vm-run-stage2"
+
+BUILD_DIR=$(mktemp -d)
+echo "Build dir: $BUILD_DIR"
+
+# Patch stage2: wrap origBuilder with || true so umount error doesn't kill VM
+cp "$STAGE2" "$BUILD_DIR/patch-stage2"
+chmod +w "$BUILD_DIR/patch-stage2"
+sed -i 's/  "\$origBuilder" "\${argsArray\[@\]}"/  "$origBuilder" "${argsArray[@]}" \|\| true/' "$BUILD_DIR/patch-stage2"
+
+# Patch vm-run: copy patched stage2 into xchg, change QEMU append, wrap source
+cp "$VM_RUN" "$BUILD_DIR/vm-run"
+chmod +w "$BUILD_DIR/vm-run"
+sed -i "s@/nix/store/sr26flm2nkfa12dkrwj2630kqsfakky4-coreutils-9.11/bin/mkdir xchg@/nix/store/sr26flm2nkfa12dkrwj2630kqsfakky4-coreutils-9.11/bin/mkdir xchg\n/nix/store/sr26flm2nkfa12dkrwj2630kqsfakky4-coreutils-9.11/bin/cp $BUILD_DIR/patch-stage2 xchg/patch-stage2@" "$BUILD_DIR/vm-run"
+sed -i 's@command=/nix/store/[^ ]*vm-run-stage2@command=/tmp/xchg/patch-stage2@' "$BUILD_DIR/vm-run"
+sed -i 's@source ./run-vm@source ./run-vm || true@' "$BUILD_DIR/vm-run"
+
+# Patch builder to use local vm-run
+cp "$SCRIPT_PATH" "$BUILD_DIR/builder"
+chmod +w "$BUILD_DIR/builder"
+sed -i "s@/nix/store/[^/]*/bin/sh -e /nix/store/[^ ]*vm-run@/nix/store/0641h8qfqaxnwrsw2nzrz6i1wbzyx92l-bash-interactive-5.3p9/bin/sh -e $BUILD_DIR/vm-run@" "$BUILD_DIR/builder"
+
+pushd "$BUILD_DIR"
+./builder || true
+popd
+
+cp "$BUILD_DIR/main.raw" nium0.raw
+echo "Image: $(pwd)/nium0.raw ($(du -h nium0.raw | cut -f1))"
