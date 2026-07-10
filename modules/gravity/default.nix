@@ -483,6 +483,8 @@ in
           /run/current-system/systemd/bin/systemctl reload-or-restart --no-block gravity || true
           /run/current-system/systemd/bin/systemctl reload-or-restart --no-block gravity-ipsec || true
         '';
+        after = [ "sops-install-secrets.service" ];
+        wants = [ "sops-install-secrets.service" ];
         serviceConfig.Type = "oneshot";
       };
       systemd.timers.gravity-registry = {
@@ -585,10 +587,12 @@ in
           wants = [
             "network-online.target"
             "strongswan-swanctl.service"
+            "sops-install-secrets.service"
           ];
           after = [
             "network-online.target"
             "strongswan-swanctl.service"
+            "sops-install-secrets.service"
             "sys-subsystem-net-devices-gravity.device"
           ];
           wantedBy = [ "multi-user.target" ];

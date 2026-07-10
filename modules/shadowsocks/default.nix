@@ -5,6 +5,9 @@
     restartUnits = [ "shadowsocks-libev.service" ];
   };
 
+  systemd.services.shadowsocks-libev.after = [ "sops-install-secrets.service" ];
+  systemd.services.shadowsocks-libev.wants = [ "sops-install-secrets.service" ];
+
   services.shadowsocks = {
     enable = true;
     port = 8964;

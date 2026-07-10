@@ -49,16 +49,6 @@
     sopsFile = ./secrets.yaml;
   };
 
-  # Sops ordering — ensures services wait for sops-install-secrets before starting
-  systemd.services.gravity-ipsec.after = [ "sops-install-secrets.service" ];
-  systemd.services.gravity-ipsec.wants = [ "sops-install-secrets.service" ];
-  systemd.services.gravity-registry.after = [ "sops-install-secrets.service" ];
-  systemd.services.gravity-registry.wants = [ "sops-install-secrets.service" ];
-  systemd.services.hysteria2.after = [ "sops-install-secrets.service" ];
-  systemd.services.hysteria2.wants = [ "sops-install-secrets.service" ];
-  systemd.services.shadowsocks-libev.after = [ "sops-install-secrets.service" ];
-  systemd.services.shadowsocks-libev.wants = [ "sops-install-secrets.service" ];
-
   zramSwap = {
     enable = true;
     algorithm = "zstd";
