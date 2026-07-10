@@ -44,6 +44,11 @@
     secretId = "nium0-sops";
   };
 
+  # Use dedicated IPSec key from host secrets.yaml, not shared gravity module key
+  sops.secrets.ipsec = lib.mkForce {
+    sopsFile = ./secrets.yaml;
+  };
+
   # Sops ordering — ensures services wait for sops-install-secrets before starting
   systemd.services.gravity-ipsec.after = [ "sops-install-secrets.service" ];
   systemd.services.gravity-ipsec.wants = [ "sops-install-secrets.service" ];
