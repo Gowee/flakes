@@ -44,7 +44,7 @@ in
 
     systemd.services.hysteria2 = {
       description = "Hysteria2 Server";
-      after = [ "network.target" "sops-nix.service" "sops-install-secrets.service" ];
+      after = [ "network.target" "sops-install-secrets.service" ];
       wants = [ "network.target" "sops-install-secrets.service" ];
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
