@@ -5,7 +5,7 @@
 # ║                                                                        ║
 # ║ Threat model: VPS provider has physical/root access to the host.       ║
 # ║ Full disk encryption ensures data confidentiality at rest.             ║
-# ║ Impermanence (btrfs @tmp rollback) reduces persistent attack surface.  ║
+# ║ Impermanence (tmpfs root) reduces persistent attack surface.           ║
 # ║ GRUB/kernel/systemd hardening mitigates VNC/console physical access.   ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 
@@ -281,7 +281,7 @@
   users.mutableUsers = false;
 
   # ── Impermanence — persistent state via bind mounts ────────────────────
-  # @tmp (root) is rolled back on every boot. Only /persist survives.
+  # tmpfs root. Only /persist survives.
   # Pair /var/log/journal with services.journald.storage = "persistent" below.
   environment.persistence."/persist" = {
     hideMounts = true;

@@ -20,7 +20,6 @@
   #   /dev/vda3  100%  LUKS     — encrypted root, btrfs inside
   #
   # btrfs subvolumes inside LUKS:
-  #   @tmp     → /          ephemeral root, rolled back on every boot
   #   @nix     → /nix       Nix store (noatime, compress=zstd)
   #   @persist → /persist   survives rollback (sops key, gravity, vnstat, SSH keys)
   disko.imageBuilder.extraRootModules = [ "btrfs" ];
@@ -95,20 +94,13 @@
                   type = "btrfs";
                   extraArgs = [ "-f" ];
                   subvolumes = {
-                    # Ephemeral root — rolled back to empty on every boot.
-                    # tmpfs would work too but btrfs saves RAM and lets us
-                    # use btrfs snapshots for @tmpsafe retention.
-                    "/@tmp" = {
-                      mountOptions = [ "compress=zstd" ];
-                      mountpoint = "/";
-                    };
                     # Nix store — read-heavy, benefits from noatime.
                     # Not rolled back — Nix manages its own integrity.
                     "/@nix" = {
                       mountOptions = [ "compress=zstd" "noatime" ];
                       mountpoint = "/nix";
                     };
-                    # Persistent state — survives @tmp rollback.
+                    # Persistent state — survives root rollback.
                     # Only things that must survive reboots live here.
                     # neededForBoot=true: impermanence requires /persist
                     # available at boot for bind mounts.
@@ -124,6 +116,14 @@
         };
       };
     };
+  };
+
+  # ── Root filesystem — tmpfs ─────────────────────────────────────────────
+  # Ephemeral: everything resets on reboot. Persistent state lives on @persist.
+  fileSystems."/" = {
+    device = "tmpfs";
+    fsType = "tmpfs";
+    options = [ "size=512M" "mode=755" ];
   };
 
   # ── No disk swap — zramSwap configured in configuration.nix ────────────
@@ -154,8 +154,8 @@
         set -eu
         echo -e "e\n3\n\nw" | ${pkgs.util-linux}/bin/fdisk /dev/vda
         ${pkgs.cloud-utils}/bin/growpart /dev/vda 3 || true
-        # LUKS is already open from initrd — just resize btrfs
-        ${pkgs.btrfs-progs}/bin/btrfs filesystem resize max /
+        # LUKS is already open from initrd — just resize btrfs at /persist
+        ${pkgs.btrfs-progs}/bin/btrfs filesystem resize max /persist
       '';
     };
   };
