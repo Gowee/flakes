@@ -203,7 +203,8 @@
       OnCalendar = "hourly";
       Persistent = true;
     };
-    wantedBy = [ "timers.target" ];
+    # Disabled — kept for future use
+    # wantedBy = [ "timers.target" ];
   };
 
   # ── Hysteria 2 ─────────────────────────────────────────────────────────
