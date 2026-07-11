@@ -4,6 +4,7 @@ keys:
   - &tyo2 age12ryhr9lh6u42ergen7k4f4c79pdk6rqgrly6um5yyfxlj062g3lsm2ljh2
   - &nah0 age1skg3exn8yjve0zczv7p4sqyfscryaff7vj2gtf77pr3djfperf0qp9n9lj
   - &nium0 age153xw92hlng0r480fuxuf34legj2h9x2y0l9dshht39fh7mhx7pks6r3wkg
+  - &tyo3 age1en8fcu353gtyutj22x2kuyy7xt9a90rrqhnp60c06sdpgcp4tgxsm8347d
 
 creation_rules:
   - path_regex: hosts/svr1/.*
@@ -24,6 +25,7 @@ creation_rules:
       - *tyo2
       - *nah0
       - *nium0
+      - *tyo3
   - path_regex: hosts/nium0/.*
     key_groups:
     - age:
@@ -34,3 +36,8 @@ creation_rules:
     - age:
       - *primary
       - *nah0
+  - path_regex: hosts/tyo3/.*
+    key_groups:
+    - age:
+      - *primary
+      - *tyo3

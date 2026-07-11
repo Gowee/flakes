@@ -31,8 +31,8 @@
       #   - Cross-service URLs (keywa, hysteria, etc.)
       infraDomain = "rua.st";
 
-      hosts = [ "svr1" "nah0" "tyo2" "nium0" /* "bud0" */ ];
-      diskoHosts = [ "svr1" "tyo2" "nium0" ];
+      hosts = [ "svr1" "nah0" "tyo2" "nium0" "tyo3" /* "bud0" */ ];
+      diskoHosts = [ "svr1" "tyo2" "nium0" "tyo3" ];
 
       nixosConfigurations = nixpkgs.lib.genAttrs hosts (name: nixpkgs.lib.nixosSystem {
         specialArgs = { inherit self inputs; inherit infraDomain; };

@@ -119,11 +119,9 @@
   };
 
   # ── Root filesystem — tmpfs ─────────────────────────────────────────────
-  # Ephemeral: everything resets on reboot. Persistent state lives on @persist.
-  fileSystems."/" = {
-    device = "tmpfs";
+  disko.devices.nodev."/" = {
     fsType = "tmpfs";
-    options = [ "size=512M" "mode=755" ];
+    mountOptions = [ "size=512M" "mode=755" "nodev" "nosuid" ];
   };
 
   # ── No disk swap — zramSwap configured in configuration.nix ────────────

@@ -14,6 +14,10 @@
   boot.loader.systemd-boot.configurationLimit = 3;
   boot.loader.grub.configurationLimit = 3;
 
-  # Limit persistent journal size to avoid large logs
-  services.journald.extraConfig = "SystemMaxUse=100M";
+  services.journald.extraConfig = ''
+    SystemMaxUse=100M
+    SystemKeepFree=500M
+    RuntimeMaxUse=50M
+    MaxRetentionSec=2weeks
+  '';
 }

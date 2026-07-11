@@ -53,10 +53,9 @@
 
   swapDevices = [ ];
 
-  fileSystems."/" = {
-    device = "tmpfs";
+  disko.devices.nodev."/" = {
     fsType = "tmpfs";
-    options = [ "size=1G" "mode=755" ];
+    mountOptions = [ "size=1G" "mode=755" "nodev" "nosuid" ];
   };
   fileSystems."/persist".neededForBoot = true;
 

@@ -82,16 +82,24 @@ in
       description = "Initrd network interface (glob pattern matched by systemd-networkd).";
     };
 
+    initrdDHCP = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Use DHCP for initrd networking instead of static IP.";
+    };
+
     initrdAddress = lib.mkOption {
-      type = lib.types.str;
+      type = lib.types.nullOr lib.types.str;
+      default = null;
       example = "216.23.121.85/24";
-      description = "Static IPv4 address for initrd (must be in keywa's CIDR allowlist).";
+      description = "Static IPv4 address for initrd (must be in keywa's CIDR allowlist). Unused when initrdDHCP = true.";
     };
 
     initrdGateway = lib.mkOption {
-      type = lib.types.str;
+      type = lib.types.nullOr lib.types.str;
+      default = null;
       example = "216.23.121.1";
-      description = "IPv4 gateway for initrd network.";
+      description = "IPv4 gateway for initrd network. Unused when initrdDHCP = true.";
     };
 
     initrdDns = lib.mkOption {
@@ -111,6 +119,12 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = cfg.initrdDHCP || (cfg.initrdAddress != null && cfg.initrdGateway != null);
+        message = "keywa-pin: initrdAddress and initrdGateway must be set when initrdDHCP is false";
+      }
+    ];
     # ── initrd binaries ──────────────────────────────────────────────
     # cacert is added via boot.initrd.systemd.contents below (not initrdBin
     # which only exposes /bin). curl is the only binary fetch-luks-key needs.
@@ -186,17 +200,22 @@ in
     # ║ RUNTIME: initrd network                                       ║
     # ║                                                                 ║
     # ║ Brings up the management interface during initrd so fetch-    ║
-    # ║ luks-key can reach keywa. Static IP required (no DHCP/RA).    ║
-    # ║ Address must be in keywa's CIDR allowlist.                     ║
+    # ║ luks-key can reach keywa. Static IP or DHCP based on config.  ║
+    # ║ Address must be in keywa's CIDR allowlist if using static IP. ║
     # ╚═════════════════════════════════════════════════════════════════╝
     boot.initrd.systemd.network = {
       enable = true;
       networks."10-initrd-eth" = {
         matchConfig.Name = [ cfg.initrdInterface ];
+        dns = cfg.initrdDns;
+        networkConfig = {
+          KeepConfiguration = "yes";
+        } // lib.optionalAttrs cfg.initrdDHCP {
+          DHCP = "yes";
+        };
+      } // lib.optionalAttrs (!cfg.initrdDHCP) {
         address = [ cfg.initrdAddress ];
         routes = [{ Gateway = cfg.initrdGateway; }];
-        dns = cfg.initrdDns;
-        networkConfig.KeepConfiguration = "yes";
       };
     };
 
