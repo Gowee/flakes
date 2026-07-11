@@ -32,7 +32,7 @@
       infraDomain = "rua.st";
 
       hosts = [ "svr1" "nah0" "tyo2" "nium0" "tyo3" /* "bud0" */ ];
-      diskoHosts = [ "svr1" "tyo2" "nium0" "tyo3" ];
+      luksHosts = [ "tyo2" ];
 
       nixosConfigurations = nixpkgs.lib.genAttrs hosts (name: nixpkgs.lib.nixosSystem {
         specialArgs = { inherit self inputs; inherit infraDomain; };
@@ -77,7 +77,7 @@
               hasKeywa = hostConfig.keywa-pin.enable or false;
               secretId = hostConfig.keywa-pin.secretId or "";
             in
-            pkgs.writeShellScriptBin "build-${name}-image" ''
+            pkgs.writeShellScriptBin "build-luks-${name}-image" ''
               set -euo pipefail
               HOST="${name}"
 
@@ -114,10 +114,10 @@
           legacyPackages.colmena = colmenaConfig;
           packages = nixpkgs.lib.listToAttrs (map
             (name: {
-              name = "build-${name}-image";
+              name = "build-luks-${name}-image";
               value = build-image name;
             })
-            diskoHosts);
+            luksHosts);
         }
       ) // {
       colmena = colmenaConfig;
