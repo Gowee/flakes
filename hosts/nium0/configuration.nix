@@ -101,31 +101,6 @@
     };
   };
 
-  systemd.services.traffic-limiter = {
-    description = "Traffic Limiter";
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = pkgs.writeShellScript "traffic-limiter" ''
-        #!/bin/sh
-        LIMIT_KIB=996147200
-        TOTAL_KIB=$(vnstat -i eth0 --json m 1 | ${pkgs.jq}/bin/jq '.interfaces[0].traffic.months[0].total')
-        if [ "$TOTAL_KIB" -gt "$LIMIT_KIB" ]; then
-          ${pkgs.systemd}/bin/shutdown now
-        fi
-      '';
-    };
-  };
-
-  systemd.timers.traffic-limiter = {
-    description = "Run traffic limiter every hour";
-    timerConfig = {
-      OnCalendar = "hourly";
-      Persistent = true;
-    };
-    # Disabled — kept for future use
-    # wantedBy = [ "timers.target" ];
-  };
-
   services.hysteria2.listen = ":443";
 
   services.gravity = {
