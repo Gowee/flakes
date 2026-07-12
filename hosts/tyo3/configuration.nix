@@ -111,9 +111,9 @@
       ExecStart = pkgs.writeShellScript "traffic-cap" ''
         #!/bin/sh
         set -euo pipefail
-        # Plan: 220GiB/mo free, 2000Mbps port. Cap = 210GiB to leave headroom.
+        # Plan: 220GiB/mo free, 2000Mbps port. Cap = 190GiB to leave headroom.
         # vnstat JSON returns bytes.
-        LIMIT_GIB=210
+        LIMIT_GIB=190
         LIMIT_BYTES=$((LIMIT_GIB * 1024 * 1024 * 1024))
 
         # Fail-safe: if measurement fails, block conservatively.

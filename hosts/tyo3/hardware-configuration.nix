@@ -80,14 +80,18 @@
   };
 
   # ── Networking ──────────────────────────────────────────────────────────
-  # DHCP only. No IPv6.
+  # IPv4 DHCP only. IPv6 explicitly disabled (kernel stack stays for gravity overlay).
   networking.useNetworkd = true;
   networking.useDHCP = false;
 
   systemd.network.networks = {
     ethernet = {
       matchConfig.Name = [ "en*" "eth*" ];
-      networkConfig.DHCP = "yes";
+      # IPv4 DHCP only — no DHCPv6, no Router Advertisement.
+      networkConfig = {
+        DHCP = "ipv4";
+        IPv6AcceptRA = false;
+      };
       linkConfig.RequiredForOnline = true;
     };
   };
