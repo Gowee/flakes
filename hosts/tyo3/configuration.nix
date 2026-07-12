@@ -35,16 +35,6 @@
 
   # ── Packages ───────────────────────────────────────────────────────────
   environment.systemPackages = with pkgs; [
-    vim
-    tmux
-    htop
-    curl
-    git
-    ldns
-    bandwhich
-    iperf3
-    tcpdump
-    mtr
     jq
   ];
 

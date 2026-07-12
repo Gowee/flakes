@@ -116,12 +116,10 @@
         };
       };
     };
-  };
-
-  # ── Root filesystem — tmpfs ─────────────────────────────────────────────
-  disko.devices.nodev."/" = {
-    fsType = "tmpfs";
-    mountOptions = [ "size=512M" "mode=755" "nodev" "nosuid" ];
+    nodev."/" = {
+      fsType = "tmpfs";
+      mountOptions = [ "size=512M" "mode=755" "nodev" "nosuid" ];
+    };
   };
 
   # ── No disk swap — zramSwap configured in configuration.nix ────────────

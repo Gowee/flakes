@@ -234,7 +234,7 @@ in
           RemainAfterExit = true;
         };
         unitConfig = {
-          AssertFileNotEmpty = "/var/lib/gravity/combined.json";
+          AssertFileNotEmpty = "/var/lib/gravity/registry.json";
         };
         wants = [ "network-online.target" ];
         after = [ "network-online.target" ];
@@ -473,22 +473,21 @@ in
         ];
         script = ''
           set -euo pipefail
-          for filename in registry.json combined.json
-          do
-            curl --fail --retry 3 --retry-connrefused \
-              -H @${config.sops.secrets.gravity_registry.path} \
-              https://raw.githubusercontent.com/tuna/gravity/artifacts/artifacts/registry.json --output /var/lib/gravity/$filename.new
-            mv /var/lib/gravity/$filename.new /var/lib/gravity/$filename
-          done
+          curl --fail --retry 3 --retry-connrefused \
+            -H @${config.sops.secrets.gravity_registry.path} \
+            https://raw.githubusercontent.com/tuna/gravity/artifacts/artifacts/registry.json \
+            --output /var/lib/gravity/registry.json.new
+          mv /var/lib/gravity/registry.json.new /var/lib/gravity/registry.json
           /run/current-system/systemd/bin/systemctl reload-or-restart --no-block gravity || true
           /run/current-system/systemd/bin/systemctl reload-or-restart --no-block gravity-ipsec || true
         '';
-        after = [ "sops-install-secrets.service" ];
-        wants = [ "sops-install-secrets.service" ];
+        after = [ "network-online.target" "sops-install-secrets.service" ];
+        wants = [ "network-online.target" "sops-install-secrets.service" ];
         serviceConfig.Type = "oneshot";
       };
       systemd.timers.gravity-registry = {
         timerConfig = {
+          OnBootSec = "0";
           OnCalendar = "*:0/15";
         };
         wantedBy = [ "timers.target" ];

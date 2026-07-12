@@ -7,10 +7,19 @@
     # Suggested utilities
     nmap
     htop # interactive process viewer
-    ncdu # disk usage analyzer
-    tshark # terminal-based wireshark
+    # ncdu # disk usage analyzer
+    # tshark # terminal-based wireshark
     strace # system call tracer
     lsof # list open files
+    
+    vim
+    tmux
+    curl
+    # git
+    bandwhich
+    iperf3
+    tcpdump
+    mtr
   ];
 
   services.vnstat.enable = true;

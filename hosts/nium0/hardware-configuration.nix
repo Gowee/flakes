@@ -49,14 +49,13 @@
         };
       };
     };
+    nodev."/" = {
+      fsType = "tmpfs";
+      mountOptions = [ "size=1G" "mode=755" "nodev" "nosuid" ];
+    };
   };
 
   swapDevices = [ ];
-
-  disko.devices.nodev."/" = {
-    fsType = "tmpfs";
-    mountOptions = [ "size=1G" "mode=755" "nodev" "nosuid" ];
-  };
   fileSystems."/persist".neededForBoot = true;
 
   systemd.services.expand-disk = {
