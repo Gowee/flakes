@@ -11,7 +11,7 @@
     # tshark # terminal-based wireshark
     strace # system call tracer
     lsof # list open files
-    
+
     vim
     tmux
     curl

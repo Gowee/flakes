@@ -21,6 +21,10 @@
     impermanence = {
       url = "github:nix-community/impermanence";
     };
+    swan-updown = {
+      url = "github:Gowee/swan-updown";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, flake-utils, disko, sops-nix, colmena, impermanence, ... }:

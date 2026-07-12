@@ -210,7 +210,8 @@
         "impermanence": "impermanence",
         "nixpkgs": "nixpkgs_3",
         "ranet-ipsec": "ranet-ipsec",
-        "sops-nix": "sops-nix"
+        "sops-nix": "sops-nix",
+        "swan-updown": "swan-updown"
       }
     },
     "sops-nix": {
@@ -246,6 +247,22 @@
         "owner": "NixOS",
         "ref": "nixos-22.11",
         "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "swan-updown": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1783870096,
+        "narHash": "sha256-FWdnDjC0PBZ0Z+8pj4xFoS7776ZZxaZKcxSXDDszHtU=",
+        "owner": "Gowee",
+        "repo": "swan-updown",
+        "rev": "47dceb8e49e07c67073ace07d054708b313c7137",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Gowee",
+        "repo": "swan-updown",
         "type": "github"
       }
     },

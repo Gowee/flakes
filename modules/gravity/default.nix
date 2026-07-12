@@ -533,97 +533,97 @@ in
         wantedBy = [ "multi-user.target" ];
       };
     })
-    (mkIf cfg.ipsec.enable {
-      sops.secrets.ipsec.sopsFile = ./secrets.yaml;
-      environment.systemPackages = [ pkgs.strongswan ];
-      environment.etc."ranet/config.json".source = (pkgs.formats.json { }).generate "config.json" {
-        organization = cfg.ipsec.organization;
-        common_name = cfg.ipsec.commonName;
-        endpoints = builtins.map
-          (ep: {
-            serial_number = ep.serialNumber;
-            address_family = ep.addressFamily;
-            address = ep.address;
-            port = cfg.ipsec.port;
-            updown = pkgs.writeShellScript "updown" ''
-              LINK=gn$(printf '%08x\n' "$PLUTO_IF_ID_OUT")
-              case "$PLUTO_VERB" in
-                up-client)
-                  ip link add "$LINK" type xfrm if_id "$PLUTO_IF_ID_OUT"
-                  ip link set "$LINK" master gravity multicast on mtu 1400 up
-                  ;;
-                down-client)
-                  ip link del "$LINK"
-                  ;;
-              esac
-            '';
-          })
-          cfg.ipsec.endpoints;
-      };
-      systemd.services.gravity-ipsec =
-        let
-          command = "ranet -c /etc/ranet/config.json -r /var/lib/gravity/registry.json -k ${config.sops.secrets.ipsec.path}";
-        in
-        {
-          path = [
-            inputs.ranet-ipsec.packages.x86_64-linux.default
-            pkgs.iproute2
-          ];
-          script = "${command} up";
-          reload = "${command} up";
-          preStop = "${command} down";
-          serviceConfig = {
-            Type = "oneshot";
-            RemainAfterExit = true;
-          };
-          unitConfig = {
-            AssertFileNotEmpty = "/var/lib/gravity/registry.json";
-          };
-          bindsTo = [
-            "strongswan-swanctl.service"
-            "sys-subsystem-net-devices-gravity.device"
-          ];
-          wants = [
-            "network-online.target"
-            "strongswan-swanctl.service"
-            "sops-install-secrets.service"
-          ];
-          after = [
-            "network-online.target"
-            "strongswan-swanctl.service"
-            "sops-install-secrets.service"
-            "sys-subsystem-net-devices-gravity.device"
-          ];
-          wantedBy = [ "multi-user.target" ];
-          reloadTriggers = [ config.environment.etc."ranet/config.json".source ];
+    (mkIf cfg.ipsec.enable (
+      let
+        swan-updown = pkgs.rustPlatform.buildRustPackage {
+          pname = "swan-updown";
+          version = "0.3.1";
+          src = inputs.swan-updown;
+          cargoLock.lockFile = "${inputs.swan-updown}/Cargo.lock";
+          doCheck = false; # upstream has no tests; build-only check
         };
-      services.strongswan-swanctl = {
-        enable = true;
-        strongswan.extraConfig = ''
-          charon {
-            interfaces_use = ${lib.strings.concatStringsSep "," cfg.ipsec.interfaces}
-            port = 0
-            port_nat_t = ${toString cfg.ipsec.port}
-            retransmit_timeout = 30
-            retransmit_base = 1
-            plugins {
-              socket-default {
-                set_source = yes
-                set_sourceif = yes
-              }
-              dhcp {
-                load = no
+      in
+      {
+        sops.secrets.ipsec.sopsFile = ./secrets.yaml;
+        environment.systemPackages = [ pkgs.strongswan ];
+        environment.etc."ranet/config.json".source = (pkgs.formats.json { }).generate "config.json" {
+          organization = cfg.ipsec.organization;
+          common_name = cfg.ipsec.commonName;
+          endpoints = builtins.map
+            (ep: {
+              serial_number = ep.serialNumber;
+              address_family = ep.addressFamily;
+              address = ep.address;
+              port = cfg.ipsec.port;
+              updown = "${swan-updown}/bin/swan-updown --prefix gn --master gravity --mtu 1400";
+            })
+            cfg.ipsec.endpoints;
+        };
+        systemd.services.gravity-ipsec =
+          let
+            command = "ranet -c /etc/ranet/config.json -r /var/lib/gravity/registry.json -k ${config.sops.secrets.ipsec.path}";
+          in
+          {
+            path = [
+              inputs.ranet-ipsec.packages.x86_64-linux.default
+              pkgs.iproute2
+            ];
+            script = "${command} up";
+            reload = "${command} up";
+            preStop = "${command} down";
+            serviceConfig = {
+              Type = "oneshot";
+              RemainAfterExit = true;
+            };
+            unitConfig = {
+              AssertFileNotEmpty = "/var/lib/gravity/registry.json";
+            };
+            bindsTo = [
+              "strongswan-swanctl.service"
+              "sys-subsystem-net-devices-gravity.device"
+            ];
+            wants = [
+              "network-online.target"
+              "strongswan-swanctl.service"
+              "sops-install-secrets.service"
+            ];
+            after = [
+              "network-online.target"
+              "strongswan-swanctl.service"
+              "sops-install-secrets.service"
+              "sys-subsystem-net-devices-gravity.device"
+            ];
+            wantedBy = [ "multi-user.target" ];
+            reloadTriggers = [ config.environment.etc."ranet/config.json".source ];
+          };
+        services.strongswan-swanctl = {
+          enable = true;
+          strongswan.extraConfig = ''
+            charon {
+              interfaces_use = ${lib.strings.concatStringsSep "," cfg.ipsec.interfaces}
+              port = 0
+              port_nat_t = ${toString cfg.ipsec.port}
+              retransmit_timeout = 30
+              retransmit_base = 1
+              plugins {
+                socket-default {
+                  set_source = yes
+                  set_sourceif = yes
+                }
+                dhcp {
+                  load = no
+                }
               }
             }
-          }
-          charon-systemd {
-            journal {
-              default = -1
-              ike = 0
+            charon-systemd {
+              journal {
+                default = -1
+                ike = 0
+              }
             }
-          }
-        '';
-      };
-    })
+          '';
+        };
+      }
+    ))
   ]);
 }
