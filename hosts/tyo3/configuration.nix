@@ -102,6 +102,61 @@
     };
   };
 
+  systemd.services.traffic-cap = {
+    description = "Traffic Cap";
+    after = [ "vnstat.service" ];
+    wants = [ "vnstat.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = pkgs.writeShellScript "traffic-cap" ''
+        #!/bin/sh
+        set -euo pipefail
+        # Plan: 220GiB/mo free, 2000Mbps port. Cap = 210GiB to leave headroom.
+        # vnstat JSON returns bytes.
+        LIMIT_GIB=210
+        LIMIT_BYTES=$((LIMIT_GIB * 1024 * 1024 * 1024))
+
+        # Fail-safe: if measurement fails, block conservatively.
+        if ! TOTAL_BYTES=$(${pkgs.vnstat}/bin/vnstat -i eth0 --json m 2>/dev/null \
+          | ${pkgs.jq}/bin/jq -r '[.interfaces[0].traffic.month[-1].rx, .interfaces[0].traffic.month[-1].tx] | add' 2>/dev/null); then
+          echo "WARN: traffic measurement failed, blocking eth0 conservatively"
+          ${pkgs.iproute2}/bin/ip link set eth0 down
+          exit 0
+        fi
+
+        # Numeric guard against schema drift / garbage.
+        case "$TOTAL_BYTES" in
+          ""|*[!0-9]*) echo "WARN: non-numeric traffic value: $TOTAL_BYTES, blocking eth0 conservatively"
+            ${pkgs.iproute2}/bin/ip link set eth0 down
+            exit 0
+            ;;
+        esac
+
+        MIB=$(( TOTAL_BYTES / 1024 / 1024 ))
+        PERCENT=$(( TOTAL_BYTES * 100 / LIMIT_BYTES ))
+        echo "traffic: ''${TOTAL_BYTES} bytes (''${MIB} MiB), ''${PERCENT}% of ''${LIMIT_GIB}GiB cap"
+        if [ "$TOTAL_BYTES" -gt "$LIMIT_BYTES" ]; then
+          ${pkgs.iproute2}/bin/ip link set eth0 down && echo "eth0 DOWN"
+        else
+          ${pkgs.iproute2}/bin/ip link set eth0 up && echo "eth0 UP"
+        fi
+      '';
+    };
+  };
+
+  systemd.timers.traffic-cap = {
+    description = "Run traffic cap check every 15 seconds";
+    after = [ "vnstat.service" ];
+    wants = [ "vnstat.service" ];
+    timerConfig = {
+      OnBootSec = "0";
+      OnUnitActiveSec = "15s";
+      AccuracySec = "1s";
+      RandomizedDelaySec = 0;
+    };
+    wantedBy = [ "timers.target" ];
+  };
+
   # ── Network ────────────────────────────────────────────────────────────
   networking.firewall.enable = false;
   systemd.network.enable = true;
@@ -130,7 +185,7 @@
   nix.gc.options = lib.mkForce "--delete-older-than 7d";
 
   # ── User ───────────────────────────────────────────────────────────────
-  users.users.root.hashedPassword = "!";
+  users.users.root.hashedPassword = "$6$sHUuTusLRCigrGWD$.JpdnLij7uXpkZ0ORWP3urxfiOdgZD9I.kXJxMnGjLJrz49Bav9npRw.iO64HXbU8f3OX.S7eZ9lrubmyPTUW.";
   users.users.root.openssh.authorizedKeys.keys = [
     "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBOVTLe5ElQ9zegq5F99LWvi4S5YlH5J0tut+Jxwp/FaNZmgSK6uEY7ySu4r/dKn+dwIwHEej152BMZO2/hGjhmw="
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICBDijuXohDJEgkv9izzEGJ1vLx/4sSs00aDq3RAI7bj"
