@@ -64,6 +64,13 @@
   # ── Hysteria 2 ─────────────────────────────────────────────────────────
   services.hysteria2.listen = ":443";
 
+  # ── Gravity IPSec key (dedicated for tyo2) ─────────────────────────────────────
+  # Use dedicated IPSec key instead of shared one from modules/gravity,
+  # as tyo2's server provider is less trusted.
+  sops.secrets.ipsec = lib.mkForce {
+    sopsFile = ./secrets.yaml;
+  };
+
   # ── Gravity ────────────────────────────────────────────────────────────
   services.gravity = {
     enable = true;
