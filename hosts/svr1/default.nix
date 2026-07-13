@@ -4,7 +4,6 @@
     ./configuration.nix
     ./gateway
     ./influxdb2.nix
-    ./tut-pod
     # ./pgsql
     self.nixosModules.cachix
     self.nixosModules.hysteria2

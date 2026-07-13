@@ -3,6 +3,7 @@
   imports = with specialArgs; [
     ./configuration.nix
     ./gateway.nix
+    ./tut-pod
     #./mongodb
     self.nixosModules.cachix
     self.nixosModules.hysteria2
