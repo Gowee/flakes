@@ -16,7 +16,9 @@
       inputs.flake-utils.follows = "flake-utils";
     };
     colmena = {
-      url = "github:zhaofengli/colmena/v0.4.0";
+      url = "github:nix-community/colmena/v0.4.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
     };
     impermanence = {
       url = "github:nix-community/impermanence";
@@ -35,40 +37,44 @@
       #   - Cross-service URLs (keywa, hysteria, etc.)
       infraDomain = "rua.st";
 
-      hosts = [ "svr1" "nah0" "tyo2" "nium0" "tyo3" /* "bud0" */ ];
+      hostNames = [ "nah0" "tyo2" "nium0" "tyo3" /* "bud0" "svr1" */ ];
       luksHosts = [ "tyo2" ];
 
-      nixosConfigurations = nixpkgs.lib.genAttrs hosts (name: nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit self inputs; inherit infraDomain; };
-        system = "x86_64-linux";
-        modules = [
-          ./hosts/${name}
-        ];
-      });
-
-      colmenaConfig = {
-        meta = {
-          nixpkgs = import nixpkgs {
-            system = "x86_64-linux";
-          };
-          specialArgs = {
-            inherit inputs;
-            inherit self;
-            inherit infraDomain;
-          };
-        };
-      } // nixpkgs.lib.genAttrs hosts (name: {
-        deployment =
-          {
-            targetHost = "${name}.${infraDomain}";
-            keys."sops.key" = {
-              keyCommand = [ "sh" "-c" "cat $HOME/.config/sops/age/${name}-key.txt || cat $HOME/.config/sops/age/keys.txt" ];
-              destDir = builtins.dirOf nixosConfigurations.${name}.config.sops.age.keyFile;
-              uploadAt = "pre-activation";
+      # ── Colmena 0.4 hive (colmenaHive = colmena.lib.makeHive { ... }) ─────
+      # `deployment.keys.<name>.destDir` derives from each host's
+      # `sops.age.keyFile` parent directory so the contract between Colmena
+      # upload path and sops-nix read path is a single source of truth
+      # (the keyFile option in the host's configuration.nix).
+      #
+      # The self-reference `self.colmenaHive.nodes.${name}.config.sops.age.keyFile`
+      # resolves via Nix lazy evaluation + memoization: destDir forces only the
+      # keyFile option (set in static config.nix), not the full deployment block.
+      # This is safe, tested, and avoids duplicating the keyFile path.
+      colmenaHive = inputs.colmena.lib.makeHive (
+        {
+          meta = {
+            nixpkgs = import nixpkgs {
+              system = "x86_64-linux";
+            };
+            specialArgs = {
+              inherit inputs;
+              inherit self;
+              inherit infraDomain;
             };
           };
-        imports = [ ./hosts/${name} ];
-      });
+        } // nixpkgs.lib.genAttrs hostNames (name: { ... }: {
+          deployment =
+            {
+              targetHost = "${name}.${infraDomain}";
+              keys."sops.key" = {
+                keyCommand = [ "sh" "-c" "cat $HOME/.config/sops/age/${name}-key.txt || cat $HOME/.config/sops/age/keys.txt" ];
+                destDir = builtins.dirOf self.colmenaHive.nodes.${name}.config.sops.age.keyFile;
+                uploadAt = "pre-activation";
+              };
+            };
+          imports = [ ./hosts/${name} ];
+        })
+      );
     in
     flake-utils.lib.eachDefaultSystem
       (system:
@@ -77,7 +83,7 @@
 
           build-image = name:
             let
-              hostConfig = nixosConfigurations.${name}.config;
+              hostConfig = self.colmenaHive.nodes.${name}.config;
               hasKeywa = hostConfig.keywa-pin.enable or false;
               secretId = hostConfig.keywa-pin.secretId or "";
             in
@@ -115,7 +121,6 @@
             '';
         in
         {
-          legacyPackages.colmena = colmenaConfig;
           packages = nixpkgs.lib.listToAttrs (map
             (name: {
               name = "build-luks-${name}-image";
@@ -124,8 +129,8 @@
             luksHosts);
         }
       ) // {
-      colmena = colmenaConfig;
+      colmenaHive = colmenaHive;
       nixosModules = import ./modules;
-      inherit nixosConfigurations;
+      nixosConfigurations = self.colmenaHive.nodes;
     };
 }

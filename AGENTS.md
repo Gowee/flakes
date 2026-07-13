@@ -36,10 +36,11 @@ modules/
 
 - **Inputs.** Pin every upstream: `nixpkgs`, `flake-utils`, `disko`, `sops-nix`, `colmena`, `impermanence`. Update with `nix flake update`.
 - **`infraDomain = "rua.st"`.** Threaded through Colmena `meta`, `specialArgs`, and cross-service URLs. Don't re-stringify `"rua.st"` elsewhere.
-- **`nixosConfigurations` and `colmenaConfig`** are bound once in a `let` block, returned once from `outputs`. No duplication.
-- **`packages.build-${name}-image`.** One per `diskoHosts` entry. For keywa-pin hosts, fetches the LUKS key from keywa (15-min timeout, Telegram-approved) via `--pre-format-files` and bakes a host-scoped `sops.age` key into `/persist/var/lib/sops.key` for first-boot decryption.
+- **`colmenaHive = inputs.colmena.lib.makeHive { ... }`.** Single source of truth for hosts — defined once. `meta.specialArgs = { inherit self inputs; inherit infraDomain; }` flows to every host's NixOS eval. Host entries use function form `{ ... }: { ... }` per Colmena 0.4 convention.
+- **`nixosConfigurations = self.colmenaHive.nodes`.** Derived from the hive; no duplicate `nixosSystem` calls. Build-image script still references `.#nixosConfigurations.<host>.config.system.build.diskoImagesScript`.
+- **`packages.build-luks-${name}-image`.** One per `luksHosts` entry. For keywa-pin hosts, fetches the LUKS key from keywa (15-min timeout, Telegram-approved) via `--pre-format-files` and bakes a host-scoped `sops.age` key into `/persist/var/lib/sops.key` for first-boot decryption.
 
-Colmena `keys."sops.key".keyCommand` prefers per-host age keys (`$HOME/.config/sops/age/${name}-key.txt`), falls back to the shared `keys.txt`. `destDir` is derived from `config.sops.age.keyFile`.
+Colmena `keys."sops.key".keyCommand` prefers per-host age keys (`$HOME/.config/sops/age/${name}-key.txt`), falls back to the shared `keys.txt`. `destDir` is derived from `config.sops.age.keyFile` (the host's `configuration.nix` is the single source of truth for the upload path).
 
 ## Secrets — sops with per-host keys
 
@@ -124,7 +125,7 @@ ssh root@<host> 'ip -6 route delete blackhole default table localsid; systemctl 
 ### Add a host
 
 1. Create `hosts/${name}/` with `default.nix`, `configuration.nix`, `hardware-configuration.nix`.
-2. Add `${name}` to the `hosts` list in `flake.nix`.
+2. Add `${name}` to the `hostNames` list in `flake.nix`.
 3. If using disko, add to `diskoHosts`.
 4. Add `&${name}` anchor + `creation_rules` block in `.sops.yaml`.
 5. Generate the per-host age key: `age-keygen -o ~/.config/sops/age/${name}-key.txt`.
@@ -132,7 +133,7 @@ ssh root@<host> 'ip -6 route delete blackhole default table localsid; systemctl 
 
 ### Disable a host
 
-Comment out the host name in `flake.nix` (both lists). Do not delete `hosts/${name}/` — keeping the directory preserves context and makes restoration a one-line edit.
+Comment out the host name in the `hostNames` list in `flake.nix`. Do not delete `hosts/${name}/` — keeping the directory preserves context and makes restoration a one-line edit.
 
 ## Engineering standards
 
