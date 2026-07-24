@@ -169,6 +169,7 @@
       # Static config for current VPS provider (cloud-init, no DHCP)
       address = [
         "216.23.121.85/24"
+        "2a0e:97c0:3f4:1::1a1a/64"
         "2a0e:97c0:3f4:1::1a0c/64"
         "2a0e:97c0:3f4:1::1a0d/64"
         "2a0e:97c0:3f4:1::1a0e/64"
@@ -183,12 +184,14 @@
         "2a0e:97c0:3f4:1::1a17/64"
         "2a0e:97c0:3f4:1::1a18/64"
         "2a0e:97c0:3f4:1::1a19/64"
-        "2a0e:97c0:3f4:1::1a1a/64"
         "2a0e:97c0:3f4:1::1a1b/64"
       ];
       routes = [
         { Gateway = "216.23.121.1"; }
-        { Gateway = "2a0e:97c0:3f4:1::1"; }
+        {
+          Gateway = "2a0e:97c0:3f4:1::1";
+          PreferredSource = "2a0e:97c0:3f4:1::1a1a";
+        }
       ];
       dns = [
         "1.1.1.1"
