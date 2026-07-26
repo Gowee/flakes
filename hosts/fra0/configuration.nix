@@ -18,23 +18,12 @@
   };
 
   # ── Kernel hardening ───────────────────────────────────────────────────
-  boot.kernelParams = [ "panic=1" "sysrq=0" ];
+  boot.kernelParams = [ "panic=1" ];
 
   # ── Sysctl ─────────────────────────────────────────────────────────────
   boot.kernel.sysctl = {
     "vm.swappiness" = 100;
     "net.ipv4.tcp_syncookies" = true;
-    "net.ipv4.conf.all.rp_filter" = 1;
-    "net.ipv4.conf.default.rp_filter" = 1;
-    "net.ipv4.conf.all.accept_redirects" = 0;
-    "net.ipv4.conf.default.accept_redirects" = 0;
-    "net.ipv6.conf.all.accept_redirects" = 0;
-    "net.ipv6.conf.default.accept_redirects" = 0;
-    "kernel.kexec_load_disabled" = 1;
-    "kernel.kptr_restrict" = 2;
-    "kernel.dmesg_restrict" = 1;
-    "kernel.perf_event_paranoid" = 3;
-    "kernel.core_pattern" = "|/bin/false";
   };
 
   security.lockKernelModules = true;
@@ -166,17 +155,6 @@
     matchConfig.Name = "lo";
     address = [ "193.168.200.131/32" ];
   };
-
-  # ── Systemd hardening — physical access mitigation ─────────────────────
-  systemd.services."serial-getty@ttyS0".enable = false;
-  systemd.services."serial-getty@ttyS1".enable = false;
-  systemd.services."serial-getty@ttyS2".enable = false;
-  systemd.services."serial-getty@ttyS3".enable = false;
-  systemd.services."getty@tty1".enable = false;
-  systemd.services.rescue.enable = false;
-  systemd.services.emergency.enable = false;
-  systemd.services.systemd-sulogin.enable = false;
-  systemd.services."debug-shell.service".enable = false;
 
   users.users.root.hashedPassword = "!";
   users.users.root.openssh.authorizedKeys.keys = [
