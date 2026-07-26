@@ -37,8 +37,8 @@
       #   - Cross-service URLs (keywa, hysteria, etc.)
       infraDomain = "rua.st";
 
-      hostNames = [ "nah0" "tyo2" "nium0" "tyo3" /* "bud0" "svr1" */ ];
-      luksHosts = [ "tyo2" ];
+      hostNames = [ "nah0" "tyo2" "nium0" "tyo3" "fra0" /* "bud0" "svr1" */ ];
+      luksHosts = [ "tyo2" "fra0" ];
 
       # ── Colmena 0.4 hive (colmenaHive = colmena.lib.makeHive { ... }) ─────
       # `deployment.keys.<name>.destDir` derives from each host's
