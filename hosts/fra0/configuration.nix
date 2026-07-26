@@ -4,7 +4,7 @@
   # ── Host identity ─────────────────────────────────────────────────────
   networking.hostName = "fra0";
   networking.domain = infraDomain;
-  time.timeZone = "Asia/Shanghai";
+  time.timeZone = "Asia/Taipei";
   system.stateVersion = "25.11";
 
   # ── Bootloader — GRUB on BIOS (GPT + EF02) ────────────────────────────
