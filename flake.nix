@@ -24,7 +24,7 @@
       url = "github:nix-community/impermanence";
     };
     swan-updown = {
-      url = "github:Gowee/swan-updown";
+      url = "github:6-6-6/swan-updown";
       flake = false;
     };
   };

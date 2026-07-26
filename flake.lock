@@ -226,15 +226,15 @@
     "swan-updown": {
       "flake": false,
       "locked": {
-        "lastModified": 1783870096,
-        "narHash": "sha256-FWdnDjC0PBZ0Z+8pj4xFoS7776ZZxaZKcxSXDDszHtU=",
-        "owner": "Gowee",
+        "lastModified": 1783922655,
+        "narHash": "sha256-22RthqQa3/nXIBoHeGezqvS4qscm+qS3/iIi9YFJLTk=",
+        "owner": "6-6-6",
         "repo": "swan-updown",
-        "rev": "47dceb8e49e07c67073ace07d054708b313c7137",
+        "rev": "1629fbc02c3d70276576330b9060a815146485d8",
         "type": "github"
       },
       "original": {
-        "owner": "Gowee",
+        "owner": "6-6-6",
         "repo": "swan-updown",
         "type": "github"
       }
