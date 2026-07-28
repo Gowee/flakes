@@ -35,7 +35,7 @@
 
   # ── Packages ───────────────────────────────────────────────────────────
   environment.systemPackages = with pkgs; [
-    jq
+    # future host-specific packages
   ];
 
   # ── Services ───────────────────────────────────────────────────────────

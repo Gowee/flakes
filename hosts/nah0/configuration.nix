@@ -74,12 +74,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    vim
-    tmux
-    bandwhich
-    iperf3
-    tcpdump
-    mtr
+    # future host-specific packages
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

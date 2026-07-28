@@ -20,6 +20,8 @@
     iperf3
     tcpdump
     mtr
+    jq
+    conntrack-tools
   ];
 
   boot.kernel.sysctl."net.netfilter.nf_conntrack_max" = 65536;
