@@ -22,6 +22,8 @@
     mtr
   ];
 
+  boot.kernel.sysctl."net.netfilter.nf_conntrack_max" = 65536;
+
   services.vnstat.enable = true;
 
   programs.fish.enable = true;
