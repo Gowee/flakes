@@ -6,7 +6,7 @@
     "virtio_net"
     "virtio_blk"
   ];
-  boot.kernelModules = [ "tun" ];
+
 
   # ── Disko: GPT + BIOS + btrfs (no LUKS) ────────────────────────────────
   # Single btrfs partition with subvolumes. @boot has no compression

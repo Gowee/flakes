@@ -5,7 +5,7 @@
     "virtio_net"
     "virtio_blk"
   ];
-  boot.kernelModules = [ "tun" ];
+
 
   # ── Disko: GPT + BIOS + LUKS + btrfs ───────────────────────────────────
   disko.imageBuilder.extraRootModules = [ "btrfs" ];

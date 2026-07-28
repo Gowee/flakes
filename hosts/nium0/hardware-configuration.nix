@@ -5,7 +5,7 @@
     "virtio_net"
     "virtio_scsi"
   ];
-  boot.kernelModules = [ "tun" ];
+
 
   disko.imageBuilder.extraRootModules = [ "btrfs" ];
   disko.devices = {

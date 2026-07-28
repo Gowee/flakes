@@ -103,7 +103,7 @@ in
 
   config = mkIf cfg.enable (mkMerge [
     ({
-      boot.kernelModules = [ "vrf" ];
+      boot.kernelModules = [ "vrf" "tun" ]; # tun for tayga
       boot.kernel.sysctl = {
         "net.vrf.strict_mode" = 1;
         "net.ipv6.conf.default.forwarding" = 1;

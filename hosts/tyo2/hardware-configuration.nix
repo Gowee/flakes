@@ -9,9 +9,7 @@
     "virtio_net"
     "virtio_blk"
   ];
-  # Required by tayga (NAT64 for divi/nat64). Must be loaded at boot because
-  # security.lockKernelModules prevents loading new modules after boot.
-  boot.kernelModules = [ "tun" ];
+
 
   # ── Disko: GPT + BIOS + LUKS + btrfs ───────────────────────────────────
   # Disk layout (GPT + BIOS boot):
