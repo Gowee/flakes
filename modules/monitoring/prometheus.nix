@@ -78,12 +78,26 @@ in
 
   # Prometheus runs in the main routing table (grafana scrapes it over loopback).
   # The shared gravity module keeps the mesh /48 source-policy-filtered, so an
-  # unbound main-table socket has no path into the mesh (default route goes out
-  # eth0). Append an unfiltered /48 route on the gravity network, nah0-only:
-  # routing via the gravity VRF recurses into table 200 and the gn* tunnels. The
-  # existing /60 more-specific route still covers local mesh addresses.
-  systemd.network.networks.gravity.routes = [
-    { Destination = "2a0c:b641:69c::/48"; }
+  # unbound main-table socket has no path into the mesh: the /48 dev gravity
+  # route in main recurses into the gravity VRF, where the `[l3mdev-table]
+  # unreachable` rule (rule pref 2000) blackholes main-table traffic before it
+  # ever reaches a gn* tunnel; `ip route get` falls through to the eth0 default.
+  #
+  # A routing policy rule hopping main-table traffic for the mesh /48 straight
+  # into table 200 is the only working escape: the reply then arrives on a gn*
+  # VRF slave, and the kernel's l3mdev ingress lookup finds the mesh /128's
+  # `local` route (proto kernel, metric 0) in table 200, so it is delivered to
+  # the unbound prometheus socket. This mirrors the manual `ip -6 rule add to
+  # 2a0c:b641:69c::/48 lookup 200 pref 1500` that was verified live. Priority
+  # 1500 sits between the mesh's rule-500 SRv6 src selector and the rule-1000
+  # l3mdev table, above the rule-2000 unreachable.
+  systemd.network.networks.gravity.routingPolicyRules = [
+    {
+      Family = "ipv6";
+      To = "2a0c:b641:69c::/48";
+      Table = config.systemd.network.netdevs.gravity.vrfConfig.Table;
+      Priority = 1500;
+    }
   ];
 
   # No cert-rotation watcher needed: certs are store paths, so rotating them is
