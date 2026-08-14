@@ -193,6 +193,7 @@ in
                 {
                   Destination = a;
                   Type = "local";
+                  Metric = 0;
                   Table = cfg.table;
                 })
               cfg.address
