@@ -51,10 +51,25 @@ with lib;
             minVersion = "VersionTLS13";
             sniStrict = true;
           };
-          # http = {
-          #   routers = { };
-          #   services = { };
-          # };
+          http = {
+            routers = {
+              grafana = {
+                rule = "Host(`grafana.${config.networking.domain}`)";
+                entrypoints = [ "https" ];
+                service = "grafana";
+                tls.certResolver = "le";
+              };
+            };
+            services = {
+              grafana = {
+                loadBalancer = {
+                  servers = [
+                    { url = "http://127.0.0.1:3000"; }
+                  ];
+                };
+              };
+            };
+          };
           tcp = {
             routers = {
               mongo = {

@@ -8,6 +8,7 @@
     self.nixosModules.shadowsocks
     self.nixosModules.gravity
     self.nixosModules.common
+    self.nixosModules.node-exporter
     inputs.sops-nix.nixosModules.sops
     inputs.disko.nixosModules.disko
     inputs.impermanence.nixosModules.impermanence

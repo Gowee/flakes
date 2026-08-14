@@ -4,13 +4,15 @@
     ./configuration.nix
     ./gateway.nix
     ./tut-pod
+    ./monitoring.nix
     #./mongodb
     self.nixosModules.cachix
     self.nixosModules.hysteria2
     self.nixosModules.nix-maintenance
-    self.nixosModules.telegraf
     self.nixosModules.shadowsocks
     self.nixosModules.common
+    self.nixosModules.node-exporter
+    self.nixosModules.prometheus-server
     # ./influxdb2.nix
     self.nixosModules.gravity
     # self.nixosModules.vultr
