@@ -180,15 +180,30 @@ in
           name = config.systemd.network.netdevs.gravity.netdevConfig.Name;
           address = cfg.address;
           linkConfig.RequiredForOnline = false;
-          routes = [
-            {
-              Destination = "2a0c:b641:69c::/48";
-              Source = "2a0c:b641:69c::/48";
-            }
-            {
-              Destination = "${cfg.srv6.prefix}0::1/60";
-            }
-          ];
+          # When systemd-networkd reconfigures or reloads gravity.network, it
+          # drops the kernel-created `local` route (metric 0) in the VRF table
+          # while keeping the mesh address, leaving only the kernel's metric 256
+          # unicast route — breaking local delivery for inbound VRF packets.
+          # Declare Type=local explicitly with Metric=50 (< 256; 0/unset becomes
+          # 1024 in IPv6 netlink) so networkd owns and re-creates it on apply.
+          routes =
+            (map
+              (a: {
+                Destination = a;
+                Type = "local";
+                Metric = 50;
+                Table = cfg.table;
+              })
+              cfg.address)
+            ++ [
+              {
+                Destination = "2a0c:b641:69c::/48";
+                Source = "2a0c:b641:69c::/48";
+              }
+              {
+                Destination = "${cfg.srv6.prefix}0::1/60";
+              }
+            ];
           routingPolicyRules =
             lib.optionals (cfg.srv6.enable) [
               {
