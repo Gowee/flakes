@@ -36,7 +36,7 @@ modules/
 
 - **Inputs.** Pin every upstream: `nixpkgs`, `flake-utils`, `disko`, `sops-nix`, `colmena`, `impermanence`. Update with `nix flake update`.
 - **`infraDomain = "rua.st"`.** Threaded through Colmena `meta`, `specialArgs`, and cross-service URLs. Don't re-stringify `"rua.st"` elsewhere.
-- **`colmenaHive = inputs.colmena.lib.makeHive { ... }`.** Single source of truth for hosts — defined once. `meta.specialArgs = { inherit self inputs; inherit infraDomain; }` flows to every host's NixOS eval. Host entries use function form `{ ... }: { ... }` per Colmena 0.4 convention.
+- **`colmenaHive = inputs.colmena.lib.makeHive { ... }`.** Single source of truth for hosts — defined once. `meta.specialArgs = { inherit self inputs; inherit infraDomain; }` flows to every host's NixOS eval. Host entries use function form `{ ... }: { ... }` per Colmena 0.5 convention.
 - **`nixosConfigurations = self.colmenaHive.nodes`.** Derived from the hive; no duplicate `nixosSystem` calls. Build-image script still references `.#nixosConfigurations.<host>.config.system.build.diskoImagesScript`.
 - **`packages.build-luks-${name}-image`.** One per `luksHosts` entry. For keywa-pin hosts, fetches the LUKS key from keywa (15-min timeout, Telegram-approved) via `--pre-format-files` and bakes a host-scoped `sops.age` key into `/persist/var/lib/sops.key` for first-boot decryption.
 

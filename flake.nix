@@ -16,7 +16,7 @@
       inputs.flake-utils.follows = "flake-utils";
     };
     colmena = {
-      url = "github:nix-community/colmena/v0.4.0";
+      url = "github:nix-community/colmena/v0.5.0";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
@@ -40,7 +40,7 @@
       hostNames = [ "nah0" "tyo2" "nium0" "tyo3" "fra0" /* "bud0" "svr1" */ ];
       luksHosts = [ "tyo2" "fra0" ];
 
-      # ── Colmena 0.4 hive (colmenaHive = colmena.lib.makeHive { ... }) ─────
+      # ── Colmena 0.5 hive (colmenaHive = colmena.lib.makeHive { ... }) ─────
       # `deployment.keys.<name>.destDir` derives from each host's
       # `sops.age.keyFile` parent directory so the contract between Colmena
       # upload path and sops-nix read path is a single source of truth
