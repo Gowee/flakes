@@ -22,6 +22,8 @@ in
   config = lib.mkIf cfg.enable {
     systemd.services.fetch-sops-key = {
       description = "Fetch sops age key from keywa";
+      # Avoid re-fetching and blocking on Telegram approval during switch/deploy.
+      restartIfChanged = false;
       after = [ "network-online.target" ];
       requires = [ "network-online.target" ];
       unitConfig.DefaultDependencies = false;
