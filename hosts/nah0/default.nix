@@ -3,8 +3,10 @@
   imports = with specialArgs; [
     ./configuration.nix
     ./gateway.nix
+    ./beszel.nix
     ./tut-pod
     #./mongodb
+    self.nixosModules.beszel
     self.nixosModules.cachix
     self.nixosModules.hysteria2
     self.nixosModules.nix-maintenance

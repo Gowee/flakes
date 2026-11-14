@@ -8,6 +8,7 @@
     self.nixosModules.shadowsocks
     self.nixosModules.gravity
     self.nixosModules.common
+    self.nixosModules.beszel
     self.nixosModules.keywa-pin
     inputs.sops-nix.nixosModules.sops
     inputs.disko.nixosModules.disko

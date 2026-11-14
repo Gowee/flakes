@@ -26,9 +26,6 @@ with lib;
               http.tls.certResolver = "le";
               http3 = { };
             };
-            mongo = {
-              address = ":27017";
-            };
           };
           certificatesResolvers.le.acme = {
             email = "whygowe@gmail.com";
@@ -51,24 +48,19 @@ with lib;
             minVersion = "VersionTLS13";
             sniStrict = true;
           };
-          # http = {
-          #   routers = { };
-          #   services = { };
-          # };
-          tcp = {
+          http = {
             routers = {
-              mongo = {
-                rule = "HostSNI(`nah0.${config.networking.domain}`)";
-                entrypoints = [ "mongo" ];
-                service = "mongo";
-                tls.certResolver = "le";
+              beszel = {
+                rule = "Host(`nah0.${config.networking.domain}`)";
+                entryPoints = [ "https" ];
+                service = "beszel";
               };
             };
             services = {
-              mongo = {
-                loadbalancer = {
+              beszel = {
+                loadBalancer = {
                   servers = [
-                    { port = "27018"; }
+                    { url = "http://${config.services.beszel.hub.host}:${toString config.services.beszel.hub.port}"; }
                   ];
                 };
               };
