@@ -40,16 +40,6 @@
       hostNames = [ "nah0" "tyo2" "nium0" "tyo3" "fra0" /* "bud0" "svr1" */ ];
       luksHosts = [ "tyo2" "fra0" ];
 
-      # ── Monitoring certs (node_exporter mTLS, reusing gravity ipsec keys) ──
-      # Prebuilt once by scripts/gen-monitoring-certs.sh and committed under
-      # monitoring-certs/ (self-signed X509 leaves derived from each host's
-      # gravity ipsec Ed25519 key, plus the cluster bundle). Referenced as a
-      # store path so the certs are part of the NixOS closure — they survive
-      # root rollbacks on impermanence hosts (/nix is a persistent subvolume)
-      # with no per-apply key upload. Rotating a host's ipsec key = re-run the
-      # script (byte-identical regeneration), commit, deploy.
-      certDir = ./monitoring-certs;
-
       # ── Colmena 0.4 hive (colmenaHive = colmena.lib.makeHive { ... }) ─────
       # `deployment.keys.<name>.destDir` derives from each host's
       # `sops.age.keyFile` parent directory so the contract between Colmena
@@ -70,7 +60,6 @@
               inherit inputs;
               inherit self;
               inherit infraDomain;
-              inherit certDir;
             };
           };
         } // nixpkgs.lib.genAttrs hostNames (name: { ... }: {

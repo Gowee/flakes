@@ -180,33 +180,15 @@ in
           name = config.systemd.network.netdevs.gravity.netdevConfig.Name;
           address = cfg.address;
           linkConfig.RequiredForOnline = false;
-          # The kernel creates a `local`-scope route (proto kernel, metric 0)
-          # for each configured mesh address inside the VRF table at address-add
-          # time. Reconfiguring the .network (networkd reload) does not
-          # re-trigger that address-add path, so the local route silently
-          # disappears and inbound mesh traffic to this host's own address is
-          # routed as a forward packet and dropped (prometheus "down"). Declare
-          # the routes here so networkd owns and re-creates them on every apply.
-          routes =
-            (map
-              (a:
-                {
-                  Destination = a;
-                  Type = "local";
-                  Metric = 50;
-                  Table = cfg.table;
-                })
-              cfg.address
-            )
-            ++ [
-              {
-                Destination = "2a0c:b641:69c::/48";
-                Source = "2a0c:b641:69c::/48";
-              }
-              {
-                Destination = "${cfg.srv6.prefix}0::1/60";
-              }
-            ];
+          routes = [
+            {
+              Destination = "2a0c:b641:69c::/48";
+              Source = "2a0c:b641:69c::/48";
+            }
+            {
+              Destination = "${cfg.srv6.prefix}0::1/60";
+            }
+          ];
           routingPolicyRules =
             lib.optionals (cfg.srv6.enable) [
               {

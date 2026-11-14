@@ -1,7 +1,5 @@
 {
   telegraf = import ./telegraf;
-  node-exporter = import ./monitoring/node-exporter.nix;
-  prometheus-server = import ./monitoring/prometheus.nix;
   shadowsocks = import ./shadowsocks;
   gravity = import ./gravity;
   cachix = import ./cachix.nix;

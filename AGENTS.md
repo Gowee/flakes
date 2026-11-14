@@ -114,14 +114,6 @@ nix run nixpkgs#colmena -- apply
 
 After a switch, systemd re-evaluates unit dependencies — services that gained new `bindsTo`/`after` will only run cleanly after a reboot unless the underlying state is already present.
 
-### Rotate monitoring mTLS certs
-
-node_exporter/prometheus share each host's gravity ipsec Ed25519 key as a TLS identity. Public self-signed certs are **prebuilt and committed** under `monitoring-certs/` (`scripts/gen-monitoring-certs.sh`), so they ship as store paths inside the NixOS closure — they survive impermanence rollbacks (`/nix` is persistent) and need no colmena key upload.
-
-1. Rotate a host's ipsec key in sops: `sops hosts/<host>/secrets.yaml`.
-2. Regenerate the bundle: `scripts/gen-monitoring-certs.sh` (needs the operator's primary age key). Regeneration is byte-identical for unchanged keys — only actual rotations produce diffs.
-3. Commit the regenerated certs; deploy. The store-path change restarts the exporter on switch.
-
 ### Recover `gravity-srv6` after a failed start
 
 A stale partial route (e.g. only the first `ExecStart` succeeded on a prior boot) blocks re-activation:
