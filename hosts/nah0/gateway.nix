@@ -31,7 +31,7 @@ with lib;
             email = "whygowe@gmail.com";
             storage = config.services.traefik.dataDir + "/acme.json";
             keyType = "EC256";
-            tlsChallenge = { };
+            httpChallenge.entryPoint = "http";
           };
           # ping = {
           #   manualRouting = true;
@@ -46,12 +46,12 @@ with lib;
         dynamicConfigOptions = {
           tls.options.default = {
             minVersion = "VersionTLS13";
-            sniStrict = true;
+            sniStrict = false;
           };
           http = {
             routers = {
               beszel = {
-                rule = "Host(`nah0.${config.networking.domain}`)";
+                rule = "Host(`beszel.${config.networking.domain}`)";
                 entryPoints = [ "https" ];
                 service = "beszel";
               };

@@ -9,7 +9,7 @@
     enable = true;
     environmentFile = config.sops.secrets.beszel_agent_env.path;
     environment = {
-      HUB_URL = "https://nah0.${config.networking.domain}";
+      HUB_URL = "https://beszel.${config.networking.domain}";
       SYSTEM_NAME = config.networking.hostName;
     };
   };

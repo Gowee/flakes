@@ -44,7 +44,7 @@ in
     enable = true;
     environmentFile = config.sops.secrets.beszel_hub_env.path;
     environment = {
-      APP_URL = "https://nah0.${config.networking.domain}";
+      APP_URL = "https://beszel.${config.networking.domain}";
     };
   };
 
