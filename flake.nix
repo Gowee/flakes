@@ -37,7 +37,7 @@
       #   - Cross-service URLs (keywa, hysteria, etc.)
       infraDomain = "rua.st";
 
-      hostNames = [ "nah0" "tyo2" "nium0" "tyo3" /* "fra0" "bud0" "svr1" */ ];
+      hostNames = [ "nah0" "nah1" "tyo2" "nium0" "tyo3" /* "fra0" "bud0" "svr1" */ ];
       luksHosts = [ "tyo2" /* "fra0" */ ];
 
       # ── Colmena 0.5 hive (colmenaHive = colmena.lib.makeHive { ... }) ─────
@@ -81,13 +81,14 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
 
-          build-image = name:
+          build-image = pkgName: name:
             let
               hostConfig = self.colmenaHive.nodes.${name}.config;
               hasKeywa = hostConfig.keywa-pin.enable or false;
               secretId = hostConfig.keywa-pin.secretId or "";
+              sopsKeyDest = hostConfig.sops.age.keyFile or "/persist/var/lib/sops.key";
             in
-            pkgs.writeShellScriptBin "build-luks-${name}-image" ''
+            pkgs.writeShellScriptBin pkgName ''
               set -euo pipefail
               HOST="${name}"
 
@@ -107,8 +108,8 @@
 
               SOPS_KEY="''${SOPS_KEY:-$HOME/.config/sops/age/$HOST-key.txt}"
               if [ -f "$SOPS_KEY" ]; then
-                DISK_ARGS+=(--post-format-files "$SOPS_KEY" /persist/var/lib/sops.key)
-                echo "==> Baking sops.key from $SOPS_KEY"
+                DISK_ARGS+=(--post-format-files "$SOPS_KEY" "${sopsKeyDest}")
+                echo "==> Baking sops.key from $SOPS_KEY -> ${sopsKeyDest}"
               fi
 
               echo "==> Building disko image script..."
@@ -121,12 +122,20 @@
             '';
         in
         {
-          packages = nixpkgs.lib.listToAttrs (map
-            (name: {
-              name = "build-luks-${name}-image";
-              value = build-image name;
-            })
-            luksHosts);
+          packages = nixpkgs.lib.listToAttrs (
+            (map
+              (name: {
+                name = "build-${name}-image";
+                value = build-image "build-${name}-image" name;
+              })
+              hostNames)
+            ++ (map
+              (name: {
+                name = "build-luks-${name}-image";
+                value = build-image "build-luks-${name}-image" name;
+              })
+              luksHosts)
+          );
         }
       ) // {
       colmenaHive = colmenaHive;
