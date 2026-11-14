@@ -125,11 +125,29 @@ ssh root@<host> 'ip -6 route delete blackhole default table localsid; systemctl 
 ### Add a host
 
 1. Create `hosts/${name}/` with `default.nix`, `configuration.nix`, `hardware-configuration.nix`.
-2. Add `${name}` to the `hostNames` list in `flake.nix`.
-3. If using disko, add to `diskoHosts`.
-4. Add `&${name}` anchor + `creation_rules` block in `.sops.yaml`.
-5. Generate the per-host age key: `age-keygen -o ~/.config/sops/age/${name}-key.txt`.
-6. Commit, deploy, then `sops updatekeys -y` on all secrets the host needs.
+2. Add `${name}` to the `hostNames` list in `flake.nix` (and `luksHosts` if using keywa LUKS).
+3. Add `&${name}` anchor + `creation_rules` block in `.sops.yaml`.
+4. Generate the per-host age key: `age-keygen -o ~/.config/sops/age/${name}-key.txt`.
+5. Run `sops updatekeys -y` on all secrets the host needs, commit, and deploy.
+
+### Bootstrap a host with `disko` raw image + `dd`
+
+`packages.build-${name}-image` (and `build-luks-${name}-image` for `luksHosts`) builds `main.raw` in `$PWD` and bakes `~/.config/sops/age/${name}-key.txt` to `config.sops.age.keyFile` via `--post-format-files`. Build from a disk-backed directory (avoid `tmpfs` `/tmp` if tight on RAM), then stream-flash over SSH:
+
+```bash
+zstd -T0 -c main.raw | ssh <user>@<host> 'sudo sh -e -c "
+  systemctl stop snapd.service snapd.socket unattended-upgrades.service oracle-cloud-agent.service 2>/dev/null || true
+  echo 1 > /proc/sys/kernel/sysrq
+  echo u > /proc/sysrq-trigger
+  zstd -dc | dd of=/dev/<disk> bs=4M iflag=fullblock oflag=direct status=progress
+  echo s > /proc/sysrq-trigger
+  echo b > /proc/sysrq-trigger
+"'
+```
+
+Why `oflag=direct` + `iflag=fullblock` matters on live low-RAM / zero-swap VPSes (~1 GiB RAM):
+- Buffered `dd` floods the RAM page cache with dirty image blocks and evicts clean file-backed executable pages (`sshd`, `zstd`, `dd`, `libc`). Once `/dev/<disk>` is overwritten, the next page fault reads new image data instead of old ELF code and crashes the session mid-flash.
+- `oflag=direct` (`O_DIRECT`) bypasses the RAM page cache entirely; `iflag=fullblock` keeps `4M` pipe reads aligned for `O_DIRECT`. `SysRq u` remounts filesystems read-only before writing, and `set -e` ensures `SysRq s` + `SysRq b` only reboots if `dd` exits 0.
 
 ### Disable a host
 
