@@ -69,6 +69,11 @@ in
         default = "grv*";
         description = "pattern for wireguard interfaces";
       };
+      rxcost = mkOption {
+        type = types.int;
+        default = 32;
+        description = "babel interface rxcost";
+      };
     };
     divi = {
       enable = mkEnableOption "sample divi configuration";
@@ -334,7 +339,7 @@ in
             interface "${cfg.bird.pattern}" {
               type tunnel;
               link quality etx;
-              rxcost 32;
+              rxcost ${toString cfg.bird.rxcost};
               hello interval 20 s;
               rtt cost 1024;
               rtt max 1024 ms;
@@ -343,7 +348,7 @@ in
             interface "gn*" {
               type tunnel;
               link quality etx;
-              rxcost 32;
+              rxcost ${toString cfg.bird.rxcost};
               hello interval 20 s;
               rtt cost 1024;
               rtt max 1024 ms;

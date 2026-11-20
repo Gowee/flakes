@@ -88,6 +88,7 @@
     bird = {
       enable = true;
       prefix = "2a0c:b641:69c:fb60::/60";
+      rxcost = 16;
     };
     ipsec = {
       enable = true;
