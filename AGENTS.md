@@ -149,6 +149,34 @@ Why `oflag=direct` + `iflag=fullblock` matters on live low-RAM / zero-swap VPSes
 - Buffered `dd` floods the RAM page cache with dirty image blocks and evicts clean file-backed executable pages (`sshd`, `zstd`, `dd`, `libc`). Once `/dev/<disk>` is overwritten, the next page fault reads new image data instead of old ELF code and crashes the session mid-flash.
 - `oflag=direct` (`O_DIRECT`) bypasses the RAM page cache entirely; `iflag=fullblock` keeps `4M` pipe reads aligned for `O_DIRECT`. `SysRq u` remounts filesystems read-only before writing, and `set -e` ensures `SysRq s` + `SysRq b` only reboots if `dd` exits 0.
 
+### Provision a raw image via Aliyun CLI + OSS
+
+For Aliyun ECS hosts (e.g. `tyo3`; `aliyun` CLI and credentials live on `nium0` under `/persist/aliyun/config`), you can import `main.raw` via OSS and replace the system disk without deleting the instance:
+
+1. Upload `main.raw` to the region's OSS bucket (specify `--endpoint` for that region):
+   ```bash
+   aliyun oss cp main.raw oss://<bucket>/<object>.raw --endpoint oss-ap-northeast-1.aliyuncs.com
+   ```
+2. Import as a custom image (`--Platform "Others Linux"`, `--BootMode BIOS`, `--DiskDeviceMapping.1.Format RAW`):
+   ```bash
+   aliyun ecs ImportImage --RegionId ap-northeast-1 \
+     --ImageName "<name>" --Architecture x86_64 --OSType linux \
+     --Platform "Others Linux" --BootMode BIOS \
+     --DiskDeviceMapping.1.Format RAW \
+     --DiskDeviceMapping.1.OSSBucket <bucket> \
+     --DiskDeviceMapping.1.OSSObject <object>.raw \
+     --DiskDeviceMapping.1.DiskImageSize 2
+   ```
+3. Poll `aliyun ecs DescribeTaskAttribute --RegionId ap-northeast-1 --TaskId <TaskId>` (or `DescribeImages --ImageId <ImageId>`) until `Available`.
+4. Stop the instance, replace its system disk, and start it:
+   ```bash
+   aliyun ecs StopInstance --RegionId ap-northeast-1 --InstanceId <InstanceId> --ForceStop true
+   # Wait until Status == "Stopped"
+   aliyun ecs ReplaceSystemDisk --RegionId ap-northeast-1 --InstanceId <InstanceId> --ImageId <ImageId>
+   aliyun ecs StartInstance --RegionId ap-northeast-1 --InstanceId <InstanceId>
+   ```
+5. Clean up the OSS object (`aliyun oss rm ...`) once verified.
+
 ### Disable a host
 
 Comment out the host name in the `hostNames` list in `flake.nix`. Do not delete `hosts/${name}/` — keeping the directory preserves context and makes restoration a one-line edit.
