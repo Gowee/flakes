@@ -175,14 +175,20 @@
   services.journald = {
     storage = "persistent";
     extraConfig = lib.mkForce ''
-      SystemMaxUse=100M
-      SystemKeepFree=100M
-      RuntimeMaxUse=50M
-      MaxRetentionSec=2weeks
+      SystemMaxUse=16M
+      SystemKeepFree=300M
+      RuntimeMaxUse=20M
+      MaxRetentionSec=1week
     '';
   };
 
-  nix.gc.options = lib.mkForce "--delete-older-than 7d";
+  nix.gc = {
+    dates = lib.mkForce "daily";
+    options = lib.mkForce "--delete-older-than 3d";
+  };
+
+  boot.loader.grub.configurationLimit = lib.mkForce 1;
+  documentation.nixos.enable = false;
 
   # ── User ───────────────────────────────────────────────────────────────
   users.users.root.hashedPassword = "$6$sHUuTusLRCigrGWD$.JpdnLij7uXpkZ0ORWP3urxfiOdgZD9I.kXJxMnGjLJrz49Bav9npRw.iO64HXbU8f3OX.S7eZ9lrubmyPTUW.";
