@@ -27,6 +27,10 @@
       url = "github:6-6-6/swan-updown";
       flake = false;
     };
+    nickcao-flakes = {
+      url = "github:NickCao/flakes";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, flake-utils, disko, sops-nix, colmena, impermanence, ... }:

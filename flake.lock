@@ -121,6 +121,22 @@
         "type": "github"
       }
     },
+    "nickcao-flakes": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1795102074,
+        "narHash": "sha256-TNv/Qbtn2fE7oIgqJqT3o71SZpLBrPSRuuc8noo7xfs=",
+        "owner": "NickCao",
+        "repo": "flakes",
+        "rev": "a187ccda0fe4925008960f6b68003c681cc90454",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NickCao",
+        "repo": "flakes",
+        "type": "github"
+      }
+    },
     "nix-github-actions": {
       "inputs": {
         "nixpkgs": [
@@ -203,6 +219,7 @@
         "disko": "disko",
         "flake-utils": "flake-utils",
         "impermanence": "impermanence",
+        "nickcao-flakes": "nickcao-flakes",
         "nixpkgs": "nixpkgs_2",
         "ranet-ipsec": "ranet-ipsec",
         "sops-nix": "sops-nix",
